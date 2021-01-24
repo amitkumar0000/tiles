@@ -4,15 +4,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginTop="10dp"
+    android:id="@+id/topCoordinator"
     >
-
 
     <FrameLayout
         android:id="@+id/top_sheet"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_behavior="@string/top_sheet_behavior"
-        app:behavior_peekHeight="10dp"
+        app:behavior_peekHeight="40dp"
         android:background="@android:color/white"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
