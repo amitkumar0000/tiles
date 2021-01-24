@@ -7,13 +7,15 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.NotificationManagerCompat
 import com.lpirro.tiledemo.customquicksettings.CustomQuikSettingActivity
 import com.lpirro.tiledemo.databinding.ActivityDeviceAdminBinding
+
 
 class DeviceAdminActivity : AppCompatActivity() {
     val mDevicePolicyManager: DevicePolicyManager by lazy {  getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager }
@@ -35,6 +37,8 @@ class DeviceAdminActivity : AppCompatActivity() {
                     mDevicePolicyManager.setStatusBarDisabled(mComponentName, true)
 
                     startActivity(Intent(this, CustomQuikSettingActivity::class.java))
+
+                    createNotificationPermission()
                 }
             } else {
                 mDevicePolicyManager.setStatusBarDisabled(mComponentName, false)
@@ -43,6 +47,16 @@ class DeviceAdminActivity : AppCompatActivity() {
         }
     }
 
+    private fun createNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            if (!NotificationManagerCompat.getEnabledListenerPackages(this).contains(packageName)) {        //ask for permission
+                val intent = Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS")
+                startActivity(intent)
+            }
+        }
+    }
+
+
     private fun setupProfile() {
         val intent =  Intent(ACTION_PROVISION_MANAGED_PROFILE)
         intent.putExtra(EXTRA_PROVISIONING_DEVICE_ADMIN_PACKAGE_NAME,
@@ -50,7 +64,7 @@ class DeviceAdminActivity : AppCompatActivity() {
         if (intent.resolveActivity(getPackageManager()) != null) {
             startActivityForResult(intent, 200);
         } else {
-            Toast.makeText(this, "Stopping.",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Stopping.", Toast.LENGTH_SHORT).show();
         }
     }
 

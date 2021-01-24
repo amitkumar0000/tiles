@@ -1,6 +1,5 @@
 package com.lpirro.tiledemo.customquicksettings
 
-import android.graphics.drawable.Drawable
 import androidx.recyclerview.widget.DiffUtil
 
 internal class TilesDiffUtils(private val oldList: List<Int>, private val newList: List<Int>): DiffUtil.Callback() {

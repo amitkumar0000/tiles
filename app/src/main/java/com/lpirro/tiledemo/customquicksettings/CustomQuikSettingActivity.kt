@@ -1,6 +1,5 @@
 package com.lpirro.tiledemo.customquicksettings
 
-import android.app.ActivityManager
 import android.content.Intent
 import android.graphics.PixelFormat
 import android.net.Uri
@@ -9,40 +8,32 @@ import android.os.Bundle
 import android.provider.Settings
 import android.view.Gravity
 import android.view.LayoutInflater
+import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
-import com.androidbolts.topsheet.TopSheetBehavior
-import com.lpirro.tiledemo.CustomViewGroup
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.lpirro.tiledemo.R
 import com.lpirro.tiledemo.databinding.ActivityCustomQuikSettingBinding
 
 
+@RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
 class CustomQuikSettingActivity : AppCompatActivity() {
 
     private var binding: ActivityCustomQuikSettingBinding? = null
 
-    private val adapater by lazy { TilesAdapater() }
+    private val tilesAdapter by lazy { TilesAdapater() }
+    private val notificationAdapter by lazy { NotificationAdapter() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityCustomQuikSettingBinding.inflate(LayoutInflater.from(this))
 //        setContentView(binding!!.root)
 
-        binding?.customQuickSetting?.adapter = adapater
-
-        val layoutManager = GridLayoutManager(this, 3)
-        binding?.customQuickSetting?.layoutManager = layoutManager
-        binding?.customQuickSetting?.suppressLayout(true)
-
-        adapater.setData(listOf(R.drawable.wifi_off,
-                R.drawable.wifi_on,
-                R.drawable.airplanemode_active,
-                R.drawable.wifi_off,
-                R.drawable.wifi_on,
-                R.drawable.airplanemode_active)
-        )
+        initQuickSettingTiles()
+        initNotification()
 
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 
@@ -56,6 +47,36 @@ class CustomQuikSettingActivity : AppCompatActivity() {
         }
     }
 
+    private fun initQuickSettingTiles() {
+        binding?.customQuickSetting?.adapter = tilesAdapter
+
+        val layoutManager = GridLayoutManager(this, 3)
+        binding?.customQuickSetting?.layoutManager = layoutManager
+        binding?.customQuickSetting?.suppressLayout(true)
+
+        tilesAdapter.setData(listOf(R.drawable.wifi_off,
+                R.drawable.wifi_on,
+                R.drawable.airplanemode_active,
+                R.drawable.wifi_off,
+                R.drawable.wifi_on,
+                R.drawable.airplanemode_active)
+        )
+
+        binding?.customQuickSetting?.isVerticalScrollBarEnabled = false
+    }
+
+    private fun initNotification() {
+        binding?.notificationList?.adapter = notificationAdapter
+
+        binding?.notificationList?.layoutManager = LinearLayoutManager(this)
+
+        notificationAdapter.setData(listOf(
+                NotificationModel(R.drawable.bluetooth, "Bluetooth", "Switch on Bluetooth"),
+                NotificationModel(R.drawable.bluetooth, "Bluetooth", "Switch on Bluetooth"),
+                NotificationModel(R.drawable.bluetooth, "Bluetooth", "Switch on Bluetooth")
+        ))
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when(requestCode) {
@@ -65,25 +86,8 @@ class CustomQuikSettingActivity : AppCompatActivity() {
         }
     }
 
-    fun addSystemOverlay() {
-        val params = WindowManager.LayoutParams(
-                WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY,
-                WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
-                PixelFormat.TRANSLUCENT)
-        params.gravity = Gravity.RIGHT or Gravity.TOP
-        params.title = "Load Average"
-        val wm = getSystemService(WINDOW_SERVICE) as WindowManager
-        TopSheetBehavior.from(binding!!.topSheet).setState(TopSheetBehavior.STATE_EXPANDED);
-
-        wm.addView(binding!!.topSheet, params)
-    }
-
     private fun blockStat() {
         val windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
-
-        val activityManager = getSystemService(ACTIVITY_SERVICE) as ActivityManager
-
-        val statusBarOverlay = CustomViewGroup(this)
 
         val localLayoutParams = WindowManager.LayoutParams()
 
@@ -94,10 +98,18 @@ class CustomQuikSettingActivity : AppCompatActivity() {
                 WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
 
         localLayoutParams.width = WindowManager.LayoutParams.MATCH_PARENT
-        localLayoutParams.height = 300
+        localLayoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT
         localLayoutParams.format = PixelFormat.TRANSPARENT
 
         windowManager.addView(binding!!.root, localLayoutParams)
+    }
+
+    private fun slideWithTopSheet() {
+        if (Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            binding?.topSheet?.setOnScrollChangeListener { v, scrollX, scrollY, oldScrollX, oldScrollY ->
+
+            }
+        }
     }
 
     override fun onDestroy() {

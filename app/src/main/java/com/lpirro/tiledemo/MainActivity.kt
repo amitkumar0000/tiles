@@ -35,6 +35,7 @@ import androidx.appcompat.app.AppCompatActivity
 
 
 val REQUEST_CODE = 0;
+val NOTIFICATION_REQUEST_CODE = 1;
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,7 +51,7 @@ class MainActivity : AppCompatActivity() {
             if (!Settings.canDrawOverlays(this)) {
                 Toast.makeText(this, "Please give my app this permission!", Toast.LENGTH_SHORT).show();
                 val intent =  Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + packageName));
-                startActivityForResult(intent, 100);
+                startActivityForResult(intent, NOTIFICATION_REQUEST_CODE);
             } else {
                 blockStat();
             }
@@ -64,6 +65,9 @@ class MainActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         when(requestCode) {
             100 -> blockStat()
+            NOTIFICATION_REQUEST_CODE -> {
+
+            }
         }
     }
 
