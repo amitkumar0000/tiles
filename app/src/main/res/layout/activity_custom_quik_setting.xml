@@ -17,7 +17,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/custom_quick_setting"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="80dp"
             android:elevation="10dp"
             />
     </FrameLayout>
@@ -27,8 +27,10 @@
         android:layout_width="match_parent"
         android:layout_height="300dp"
         android:layout_marginTop="40dp"
+        android:visibility="gone"
         android:background="@android:color/white"
-        app:layout_behavior="@string/top_sheet_auto_close_behavior"
+        app:layout_anchorGravity="end|bottom"
+
         android:elevation="20dp"
 
         />

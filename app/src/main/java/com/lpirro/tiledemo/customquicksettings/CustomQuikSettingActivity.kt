@@ -50,7 +50,7 @@ class CustomQuikSettingActivity : AppCompatActivity() {
     private fun initQuickSettingTiles() {
         binding?.customQuickSetting?.adapter = tilesAdapter
 
-        val layoutManager = GridLayoutManager(this, 3)
+        val layoutManager = GridLayoutManager(this, 4)
         binding?.customQuickSetting?.layoutManager = layoutManager
         binding?.customQuickSetting?.suppressLayout(true)
 
@@ -58,6 +58,8 @@ class CustomQuikSettingActivity : AppCompatActivity() {
                 R.drawable.wifi_on,
                 R.drawable.airplanemode_active,
                 R.drawable.wifi_off,
+                R.drawable.airplanemode_active,
+                R.drawable.airplanemode_active,
                 R.drawable.wifi_on,
                 R.drawable.airplanemode_active)
         )
