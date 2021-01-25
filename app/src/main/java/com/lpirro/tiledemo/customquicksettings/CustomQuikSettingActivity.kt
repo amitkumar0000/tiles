@@ -15,12 +15,10 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.androidbolts.topsheet.TopSheetBehavior
 import com.lpirro.tiledemo.R
 import com.lpirro.tiledemo.RxBus
 import com.lpirro.tiledemo.databinding.ActivityCustomQuikSettingBinding
-import java.lang.IllegalArgumentException
 
 
 const val WIFI = "wifi"
@@ -59,8 +57,8 @@ class CustomQuikSettingActivity : AppCompatActivity() {
 
     private fun observeNotification() {
         RxBus.listen().subscribe({
-                tilesAdapter.setData(listOf(it))
-        },{
+            tilesAdapter.setData(listOf(it))
+        }, {
 
         })
     }

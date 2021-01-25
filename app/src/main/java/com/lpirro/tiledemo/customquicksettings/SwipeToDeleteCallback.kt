@@ -13,4 +13,9 @@ internal class SwipeToDeleteCallback(val adapater: TilesAdapater) : ItemTouchHel
         val position = viewHolder.adapterPosition
         adapater.deleteItem(position);
     }
+
+    override fun getSwipeDirs(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder): Int {
+        if(viewHolder is TilesViewHolder) return 0
+        return super.getSwipeDirs(recyclerView, viewHolder)
+    }
 }
