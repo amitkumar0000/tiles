@@ -1,59 +1,80 @@
-package com.lpirro.tiledemo.customquicksettings
+package com.lpirro.tiledemo.customquicksettings.service
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.app.Service
+import android.content.Context
 import android.content.Intent
 import android.graphics.PixelFormat
-import android.net.Uri
 import android.os.Build
-import android.os.Bundle
-import android.provider.Settings
+import android.os.IBinder
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.view.WindowManager
-import android.widget.Toast
 import androidx.annotation.RequiresApi
-import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.NotificationCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
-import com.androidbolts.topsheet.TopSheetBehavior
 import com.lpirro.tiledemo.R
 import com.lpirro.tiledemo.RxBus
-import com.lpirro.tiledemo.customquicksettings.service.QuickSettingService
+import com.lpirro.tiledemo.customquicksettings.*
 import com.lpirro.tiledemo.databinding.ActivityCustomQuikSettingBinding
 
 
-const val WIFI = "wifi"
-const val BLUETOOTH = "bluetooth"
-const val AIRPLANE = "airplane"
-
-@RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
-class CustomQuikSettingActivity : AppCompatActivity() {
+class QuickSettingService : Service() {
 
     private var binding: ActivityCustomQuikSettingBinding? = null
 
+    override fun onBind(intent: Intent): IBinder? {
+        return null
+    }
+
+
     private val tilesAdapter by lazy { TilesAdapater() }
-    private val notificationAdapter by lazy { NotificationAdapter() }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityCustomQuikSettingBinding.inflate(LayoutInflater.from(this))
-//        setContentView(binding!!.root)
+    init {
+    }
 
-        initQuickSettingTiles()
-        initNotification()
-
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-
-            if (!Settings.canDrawOverlays(this)) {
-                Toast.makeText(this, "Please give my app this permission!", Toast.LENGTH_SHORT).show();
-                val intent =  Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + packageName));
-                startActivityForResult(intent, 100);
-            } else {
-                blockStat()
-            }
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        init()
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            attachForegroundNotification()
         }
+        return START_STICKY
+    }
 
-        observeNotification()
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun attachForegroundNotification() {
+        val NOTIFICATION_CHANNEL_ID = "com.lpirro.tiledemo"
+        val channelName = "My Background Service"
+        val chan = NotificationChannel(NOTIFICATION_CHANNEL_ID, channelName, NotificationManager.IMPORTANCE_NONE)
+        val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        manager.createNotificationChannel(chan);
+
+
+        val notificationIntent = Intent(this, QuickSettingService::class.java)
+        val pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0)
+// 1
+        val notification = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
+                .setContentTitle("QuickSetting")
+                .setContentText("QuickSetting is running")
+                .setSmallIcon(R.drawable.ic_tile_calendar)
+                .setContentIntent(pendingIntent)
+                .build()
+        startForeground(123, notification)
+    }
+
+
+    private fun init() {
+        if(binding == null) {
+            binding = ActivityCustomQuikSettingBinding.inflate(LayoutInflater.from(this))
+
+            initQuickSettingTiles()
+            showQuickSettingMenu()
+            observeNotification()
+        }
     }
 
     private fun observeNotification() {
@@ -106,36 +127,11 @@ class CustomQuikSettingActivity : AppCompatActivity() {
         binding?.customQuickSetting?.isVerticalScrollBarEnabled = false
 
         val itemTouchHelper = ItemTouchHelper(SwipeToDeleteCallback(adapater = tilesAdapter))
-        itemTouchHelper.attachToRecyclerView(binding!!.customQuickSetting)
+        itemTouchHelper.attachToRecyclerView(binding?.customQuickSetting)
     }
 
-    private fun initNotification() {
-//        binding?.notificationList?.adapter = notificationAdapter
-//
-//        binding?.notificationList?.layoutManager = LinearLayoutManager(this)
-//
-//        notificationAdapter.setData(listOf(
-//                NotificationModel(R.drawable.bluetooth, "Bluetooth", "Switch on Bluetooth"),
-//                NotificationModel(R.drawable.bluetooth, "Bluetooth", "Switch on Bluetooth"),
-//                NotificationModel(R.drawable.bluetooth, "Bluetooth", "Switch on Bluetooth")
-//        ))
-    }
+    private fun showQuickSettingMenu() {
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        when(requestCode) {
-            100 -> {
-                blockStat()
-            }
-        }
-    }
-
-    private fun blockStat() {
-        startService(Intent(this, QuickSettingService::class.java))
-        finish()
-    }
-
-    private fun addQuickSettingMenu() {
         if(binding!!.root.isShown)
             return
 
@@ -154,10 +150,6 @@ class CustomQuikSettingActivity : AppCompatActivity() {
         localLayoutParams.format = PixelFormat.TRANSPARENT
 
         windowManager.addView(binding!!.root, localLayoutParams)
-    }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        binding = null
     }
 }
