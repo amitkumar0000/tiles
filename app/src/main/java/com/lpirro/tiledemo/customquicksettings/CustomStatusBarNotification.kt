@@ -7,6 +7,7 @@ import android.service.notification.StatusBarNotification
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationManagerCompat
+import com.lpirro.tiledemo.RxBus
 
 
 @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
@@ -20,8 +21,8 @@ class CustomStatusBarNotification: NotificationListenerService() {
 
         sbn?.notification?.let {
             val extra = it.extras
-            val title = extra.get("android.title")
-            val text = extra.get("android.text")
+            val title = extra.get("android.title") as String?
+            val text = extra.get("android.text") as String?
 
             Log.d("STATUS title", ":- $title ")
             Log.d("STATUS text", ":-  $text")
@@ -31,6 +32,14 @@ class CustomStatusBarNotification: NotificationListenerService() {
             } else {
                 TODO("VERSION.SDK_INT < M")
             }
+
+//            if (sbn?.packageName.equals("com.example.testsample")) {
+//                Log.d("STATUS"," Notiification blocked ${sbn?.packageName}")
+//                return
+//            }
+
+
+            RxBus.publish(QuickSettingModel.NotificationModel(title ?: "", text ?: "", 0, it.smallIcon))
 
             cancelAllNotifications()
         }

@@ -2,6 +2,7 @@ package com.lpirro.tiledemo.customquicksettings
 
 import android.content.Context
 import android.graphics.drawable.Drawable
+import android.graphics.drawable.Icon
 import android.net.wifi.WifiManager
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -65,7 +66,13 @@ internal class TilesAdapater : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     private fun bindNotificationModel(holder: NotificationViewHolder, notificationModel: QuickSettingModel.NotificationModel) {
-        holder.smallIcon.setImageResource(notificationModel.smallIcon)
+        if(notificationModel.smallIcon == 0) {
+            notificationModel.icon?.let {
+                holder.smallIcon.setImageIcon(it)
+            }
+        } else {
+            holder.smallIcon.setImageResource(notificationModel.smallIcon)
+        }
         holder.title.text = notificationModel.title
         holder.content.text = notificationModel.content
     }
@@ -86,14 +93,21 @@ internal class TilesAdapater : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     fun setData(newList: List<QuickSettingModel>) {
         val diffUtils = TilesDiffUtils(listTiles, newList)
         val diffResult = DiffUtil.calculateDiff(diffUtils)
-        listTiles.clear()
+//        listTiles.clear()
         listTiles.addAll(newList)
         diffResult.dispatchUpdatesTo(this)
     }
+
+    fun deleteItem(position: Int) {
+        listTiles.removeAt(position)
+        notifyItemRemoved(position)
+    }
+
+
 }
 
 sealed class QuickSettingModel {
     data class TilesModel(val name: String, val drawable: Int): QuickSettingModel()
-    data class NotificationModel(val title: String, val content: String, val smallIcon: Int): QuickSettingModel()
+    data class NotificationModel(val title: String, val content: String, val smallIcon: Int = 0, val icon: Icon? = null): QuickSettingModel()
 }
 

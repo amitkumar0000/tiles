@@ -14,9 +14,11 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.lpirro.tiledemo.R
+import com.lpirro.tiledemo.RxBus
 import com.lpirro.tiledemo.databinding.ActivityCustomQuikSettingBinding
 import java.lang.IllegalArgumentException
 
@@ -51,6 +53,16 @@ class CustomQuikSettingActivity : AppCompatActivity() {
                 blockStat()
             }
         }
+
+        observeNotification()
+    }
+
+    private fun observeNotification() {
+        RxBus.listen().subscribe({
+                tilesAdapter.setData(listOf(it))
+        },{
+
+        })
     }
 
     private fun initQuickSettingTiles() {
@@ -93,6 +105,9 @@ class CustomQuikSettingActivity : AppCompatActivity() {
         )
 
         binding?.customQuickSetting?.isVerticalScrollBarEnabled = false
+
+        val itemTouchHelper = ItemTouchHelper(SwipeToDeleteCallback(adapater = tilesAdapter))
+        itemTouchHelper.attachToRecyclerView(binding!!.customQuickSetting)
     }
 
     private fun initNotification() {
