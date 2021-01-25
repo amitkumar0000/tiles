@@ -9,6 +9,7 @@ import android.content.Intent
 import android.graphics.PixelFormat
 import android.os.Build
 import android.os.IBinder
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -38,9 +39,11 @@ class QuickSettingService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        init()
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             attachForegroundNotification()
+            init()
+            Log.d("STATUS"," attachForegroundNotification complete received")
+
         }
         return START_STICKY
     }
