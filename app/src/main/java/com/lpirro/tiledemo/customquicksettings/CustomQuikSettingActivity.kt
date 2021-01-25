@@ -15,9 +15,15 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.lpirro.tiledemo.R
 import com.lpirro.tiledemo.databinding.ActivityCustomQuikSettingBinding
+import java.lang.IllegalArgumentException
 
+
+const val WIFI = "wifi"
+const val BLUETOOTH = "bluetooth"
+const val AIRPLANE = "airplane"
 
 @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
 class CustomQuikSettingActivity : AppCompatActivity() {
@@ -51,32 +57,54 @@ class CustomQuikSettingActivity : AppCompatActivity() {
         binding?.customQuickSetting?.adapter = tilesAdapter
 
         val layoutManager = GridLayoutManager(this, 4)
-        binding?.customQuickSetting?.layoutManager = layoutManager
-        binding?.customQuickSetting?.suppressLayout(true)
 
-        tilesAdapter.setData(listOf(R.drawable.wifi_off,
-                R.drawable.wifi_on,
-                R.drawable.airplanemode_active,
-                R.drawable.wifi_off,
-                R.drawable.airplanemode_active,
-                R.drawable.airplanemode_active,
-                R.drawable.wifi_on,
-                R.drawable.airplanemode_active)
+        layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+            override fun getSpanSize(position: Int): Int {
+                return when(tilesAdapter.getViewType(position)) {
+                    TILES -> {
+                        1
+                    }
+                    NOTIFICATIOn -> {
+                        4
+                    }
+                    else -> {
+                        throw IllegalArgumentException("View holder of this position not supported")
+                    }
+                }
+            }
+        }
+
+        binding?.customQuickSetting?.layoutManager = layoutManager
+//        binding?.customQuickSetting?.suppressLayout(true)
+
+        tilesAdapter.setData(
+                listOf(
+                        QuickSettingModel.TilesModel(WIFI, R.drawable.wifi_off),
+                        QuickSettingModel.TilesModel(BLUETOOTH, R.drawable.bluetooth),
+                        QuickSettingModel.TilesModel(AIRPLANE, R.drawable.airplanemode_inactive),
+                        QuickSettingModel.TilesModel(WIFI, R.drawable.wifi_off),
+                        QuickSettingModel.TilesModel(BLUETOOTH, R.drawable.bluetooth),
+                        QuickSettingModel.TilesModel(AIRPLANE, R.drawable.airplanemode_inactive),
+                        QuickSettingModel.TilesModel(WIFI, R.drawable.wifi_off),
+                        QuickSettingModel.TilesModel(BLUETOOTH, R.drawable.bluetooth),
+                        QuickSettingModel.TilesModel(BLUETOOTH, R.drawable.bluetooth),
+                        QuickSettingModel.NotificationModel("Bluetooth", "Switch on Bluetooth", R.drawable.bluetooth)
+                )
         )
 
         binding?.customQuickSetting?.isVerticalScrollBarEnabled = false
     }
 
     private fun initNotification() {
-        binding?.notificationList?.adapter = notificationAdapter
-
-        binding?.notificationList?.layoutManager = LinearLayoutManager(this)
-
-        notificationAdapter.setData(listOf(
-                NotificationModel(R.drawable.bluetooth, "Bluetooth", "Switch on Bluetooth"),
-                NotificationModel(R.drawable.bluetooth, "Bluetooth", "Switch on Bluetooth"),
-                NotificationModel(R.drawable.bluetooth, "Bluetooth", "Switch on Bluetooth")
-        ))
+//        binding?.notificationList?.adapter = notificationAdapter
+//
+//        binding?.notificationList?.layoutManager = LinearLayoutManager(this)
+//
+//        notificationAdapter.setData(listOf(
+//                NotificationModel(R.drawable.bluetooth, "Bluetooth", "Switch on Bluetooth"),
+//                NotificationModel(R.drawable.bluetooth, "Bluetooth", "Switch on Bluetooth"),
+//                NotificationModel(R.drawable.bluetooth, "Bluetooth", "Switch on Bluetooth")
+//        ))
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -104,6 +132,8 @@ class CustomQuikSettingActivity : AppCompatActivity() {
         localLayoutParams.format = PixelFormat.TRANSPARENT
 
         windowManager.addView(binding!!.root, localLayoutParams)
+
+        finish()
     }
 
     private fun slideWithTopSheet() {

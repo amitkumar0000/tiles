@@ -37,6 +37,7 @@ class DeviceAdminActivity : AppCompatActivity() {
                     mDevicePolicyManager.setStatusBarDisabled(mComponentName, true)
 
                     startActivity(Intent(this, CustomQuikSettingActivity::class.java))
+                    finish()
 
                     createNotificationPermission()
                 }

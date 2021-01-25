@@ -2,7 +2,7 @@ package com.lpirro.tiledemo.customquicksettings
 
 import androidx.recyclerview.widget.DiffUtil
 
-internal class TilesDiffUtils(private val oldList: List<Int>, private val newList: List<Int>): DiffUtil.Callback() {
+internal class TilesDiffUtils(private val oldList: List<QuickSettingModel>, private val newList: List<QuickSettingModel>): DiffUtil.Callback() {
     override fun getOldListSize() = oldList.size
 
     override fun getNewListSize() = newList.size

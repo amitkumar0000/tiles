@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/topCoordinator"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="350dp">
 
     <FrameLayout
         android:id="@+id/top_sheet"
@@ -17,23 +17,10 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/custom_quick_setting"
             android:layout_width="match_parent"
-            android:layout_height="80dp"
+            android:layout_height="match_parent"
             android:elevation="10dp"
             />
     </FrameLayout>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/notificationList"
-        android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:layout_marginTop="40dp"
-        android:visibility="gone"
-        android:background="@android:color/white"
-        app:layout_anchorGravity="end|bottom"
-
-        android:elevation="20dp"
-
-        />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
