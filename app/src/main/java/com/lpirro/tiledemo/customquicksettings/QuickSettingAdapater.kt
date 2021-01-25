@@ -1,7 +1,6 @@
 package com.lpirro.tiledemo.customquicksettings
 
 import android.content.Context
-import android.graphics.drawable.Drawable
 import android.graphics.drawable.Icon
 import android.net.wifi.WifiManager
 import android.view.LayoutInflater
@@ -25,7 +24,7 @@ internal class TilesAdapater : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         return when (viewType) {
             TILES -> {
                 val binding = CustomTilesBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-                return TilesViewHolder(binding)
+                return QuickSettingViewHolder(binding)
             }
             NOTIFICATIOn -> {
                 val binding = CustomNotificationLayoutBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -41,7 +40,7 @@ internal class TilesAdapater : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
         when(listTiles[position]) {
             is QuickSettingModel.TilesModel -> {
-                bindTilesModel(holder = holder as TilesViewHolder, listTiles[position] as QuickSettingModel.TilesModel)
+                bindTilesModel(holder = holder as QuickSettingViewHolder, listTiles[position] as QuickSettingModel.TilesModel)
             }
             is QuickSettingModel.NotificationModel -> {
                 bindNotificationModel(holder = holder as NotificationViewHolder, listTiles[position] as QuickSettingModel.NotificationModel)
@@ -51,7 +50,7 @@ internal class TilesAdapater : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     }
 
-    private fun bindTilesModel(holder: TilesViewHolder, tileModel: QuickSettingModel.TilesModel) {
+    private fun bindTilesModel(holder: QuickSettingViewHolder, tileModel: QuickSettingModel.TilesModel) {
 
         holder.imageView.setImageResource(tileModel.drawable)
 
@@ -91,7 +90,7 @@ internal class TilesAdapater : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     fun setData(newList: List<QuickSettingModel>) {
-        val diffUtils = TilesDiffUtils(listTiles, newList)
+        val diffUtils = QuickSettingDiffUtils(listTiles, newList)
         val diffResult = DiffUtil.calculateDiff(diffUtils)
 //        listTiles.clear()
         listTiles.addAll(newList)
