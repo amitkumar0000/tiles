@@ -97,16 +97,16 @@ class CustomQuikSettingActivity : AppCompatActivity() {
 
         tilesAdapter.setData(
                 listOf(
-                        QuickSettingModel.TilesModel(WIFI, R.drawable.wifi_off),
-                        QuickSettingModel.TilesModel(BLUETOOTH, R.drawable.bluetooth),
-                        QuickSettingModel.TilesModel(AIRPLANE, R.drawable.airplanemode_inactive),
-                        QuickSettingModel.TilesModel(WIFI, R.drawable.wifi_off),
-                        QuickSettingModel.TilesModel(BLUETOOTH, R.drawable.bluetooth),
-                        QuickSettingModel.TilesModel(AIRPLANE, R.drawable.airplanemode_inactive),
-                        QuickSettingModel.TilesModel(WIFI, R.drawable.wifi_off),
-                        QuickSettingModel.TilesModel(BLUETOOTH, R.drawable.bluetooth),
-                        QuickSettingModel.TilesModel(BLUETOOTH, R.drawable.bluetooth),
-                        QuickSettingModel.NotificationModel("Bluetooth", "Switch on Bluetooth", R.drawable.bluetooth)
+                        QuickSettingModel.TilesModel(WIFI, R.drawable.wifi_on_state),
+                        QuickSettingModel.TilesModel(BLUETOOTH, R.drawable.wifi_on_state),
+                        QuickSettingModel.TilesModel(AIRPLANE, R.drawable.wifi_on_state),
+                        QuickSettingModel.TilesModel(WIFI, R.drawable.wifi_on_state),
+                        QuickSettingModel.TilesModel(BLUETOOTH, R.drawable.wifi_on_state),
+                        QuickSettingModel.TilesModel(AIRPLANE, R.drawable.wifi_on_state),
+                        QuickSettingModel.TilesModel(WIFI, R.drawable.wifi_on_state),
+                        QuickSettingModel.TilesModel(BLUETOOTH, R.drawable.wifi_on_state),
+                        QuickSettingModel.TilesModel(BLUETOOTH, R.drawable.wifi_on_state),
+                        QuickSettingModel.NotificationModel("Bluetooth", "Switch on Bluetooth", R.drawable.wifi_on_state)
                 )
         )
 
