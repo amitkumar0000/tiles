@@ -33,10 +33,10 @@ class CustomStatusBarNotification: NotificationListenerService() {
                 TODO("VERSION.SDK_INT < M")
             }
 
-//            if (sbn?.packageName.equals("com.example.testsample")) {
-//                Log.d("STATUS"," Notiification blocked ${sbn?.packageName}")
-//                return
-//            }
+            if (sbn?.packageName.equals("com.example.testsample")) {
+                Log.d("STATUS"," Notiification blocked ${sbn?.packageName}")
+                return
+            }
 
 
             RxBus.publish(QuickSettingModel.NotificationModel(title ?: "", text ?: "", 0, it.smallIcon))

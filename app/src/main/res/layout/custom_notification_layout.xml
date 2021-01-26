@@ -9,6 +9,8 @@
     android:layout_marginLeft="@dimen/dimen_x"
     android:layout_marginRight="@dimen/dimen_x"
     android:layout_marginBottom="@dimen/dimen_x"
+    app:cardBackgroundColor="@android:color/white"
+    android:backgroundTint="@android:color/white"
     android:elevation="40dp"
     >
     <androidx.constraintlayout.widget.ConstraintLayout

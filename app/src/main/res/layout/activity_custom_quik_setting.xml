@@ -18,6 +18,7 @@
             android:id="@+id/custom_quick_setting"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="#EEEEEE"
             android:elevation="10dp"
             />
     </FrameLayout>

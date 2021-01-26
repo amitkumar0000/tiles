@@ -1,5 +1,8 @@
 package com.lpirro.tiledemo.customquicksettings
 
+import android.app.admin.DevicePolicyManager
+import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
 import android.graphics.PixelFormat
 import android.net.Uri
@@ -16,6 +19,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.androidbolts.topsheet.TopSheetBehavior
+import com.lpirro.tiledemo.DeviceAdminDemo
 import com.lpirro.tiledemo.R
 import com.lpirro.tiledemo.RxBus
 import com.lpirro.tiledemo.customquicksettings.service.QuickSettingService
@@ -33,6 +37,9 @@ class CustomQuikSettingActivity : AppCompatActivity() {
 
     private val tilesAdapter by lazy { TilesAdapater() }
     private val notificationAdapter by lazy { NotificationAdapter() }
+
+    val mDevicePolicyManager: DevicePolicyManager by lazy {  getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager }
+    val  mComponentName: ComponentName by lazy { ComponentName(this, DeviceAdminDemo::class.java) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -128,6 +135,17 @@ class CustomQuikSettingActivity : AppCompatActivity() {
                 blockStat()
             }
         }
+    }
+
+    private fun stopQuickSetting() {
+//        binding!!.menuOption.setOnClickListener {
+//
+//
+//            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+//                mDevicePolicyManager.setStatusBarDisabled(mComponentName, false)
+//            }
+//
+//        }
     }
 
     private fun blockStat() {
