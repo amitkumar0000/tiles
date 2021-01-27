@@ -119,6 +119,9 @@ class QuickSettingService : Service() {
                     TILES -> {
                         1
                     }
+                    BRIGHTNESS -> {
+                        4
+                    }
                     NOTIFICATIOn -> {
                         4
                     }
@@ -143,6 +146,7 @@ class QuickSettingService : Service() {
                         QuickSettingModel.TilesModel(WIFI, R.drawable.wifi_on_state),
                         QuickSettingModel.TilesModel(BLUETOOTH, R.drawable.wifi_on_state),
                         QuickSettingModel.TilesModel(BLUETOOTH, R.drawable.wifi_on_state),
+                        QuickSettingModel.BrightnessModel,
                         QuickSettingModel.NotificationModel("Bluetooth", "Switch on Bluetooth", R.drawable.wifi_on_state)
                 )
         )

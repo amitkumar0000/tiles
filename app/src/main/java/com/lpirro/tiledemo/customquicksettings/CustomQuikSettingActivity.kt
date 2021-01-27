@@ -106,6 +106,7 @@ class CustomQuikSettingActivity : AppCompatActivity() {
                         QuickSettingModel.TilesModel(WIFI, R.drawable.wifi_on_state),
                         QuickSettingModel.TilesModel(BLUETOOTH, R.drawable.wifi_on_state),
                         QuickSettingModel.TilesModel(BLUETOOTH, R.drawable.wifi_on_state),
+                        QuickSettingModel.BrightnessModel,
                         QuickSettingModel.NotificationModel("Bluetooth", "Switch on Bluetooth", R.drawable.wifi_on_state)
                 )
         )

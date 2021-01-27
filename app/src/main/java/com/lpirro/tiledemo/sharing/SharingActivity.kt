@@ -19,6 +19,7 @@ class SharingActivity : AppCompatActivity() {
         val intent = Intent()
 
         intent.putExtra("Sender_pkg", "TileDemo")
+        intent.putExtra("QUICK_SETTING_STATE", false)
         setResult(RESULT_OK, intent)
 
         finish()
