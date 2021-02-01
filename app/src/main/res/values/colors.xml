@@ -22,4 +22,7 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="custom_quick_setting_color">#CFD8DC</color>
+    <color name="tilesBackgroundColor">#F3F4F8</color>
+    <color name="tileBackgroundColor">#D9DADE</color>
+    <color name="tileSelectedBackgroundColor">#04A1FE</color>
 </resources>

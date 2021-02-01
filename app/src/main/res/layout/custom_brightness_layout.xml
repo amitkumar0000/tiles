@@ -10,6 +10,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:id="@+id/brightnessBar"
+        android:background="@android:color/white"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

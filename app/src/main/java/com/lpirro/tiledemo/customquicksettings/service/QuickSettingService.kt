@@ -38,7 +38,7 @@ class QuickSettingService : Service() {
     val mDevicePolicyManager: DevicePolicyManager by lazy {  getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager }
     val  mComponentName: ComponentName by lazy { ComponentName(this, DeviceAdminDemo::class.java) }
 
-    private val tilesAdapter by lazy { TilesAdapater() }
+    private val tilesAdapter by lazy { TilesAdapter() }
 
     init {
     }
@@ -68,7 +68,7 @@ class QuickSettingService : Service() {
         val notification = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
                 .setContentTitle("QuickSetting")
                 .setContentText("QuickSetting is running")
-                .setSmallIcon(R.drawable.ic_tile_calendar)
+                .setSmallIcon(R.drawable.ic_wifi)
                 .setContentIntent(pendingIntent)
                 .build()
         startForeground(123, notification)
@@ -137,23 +137,19 @@ class QuickSettingService : Service() {
 
         tilesAdapter.setData(
                 listOf(
-                        QuickSettingModel.TilesModel(WIFI, R.drawable.wifi_on_state),
-                        QuickSettingModel.TilesModel(BLUETOOTH, R.drawable.wifi_on_state),
-                        QuickSettingModel.TilesModel(AIRPLANE, R.drawable.wifi_on_state),
-                        QuickSettingModel.TilesModel(WIFI, R.drawable.wifi_on_state),
-                        QuickSettingModel.TilesModel(BLUETOOTH, R.drawable.wifi_on_state),
-                        QuickSettingModel.TilesModel(AIRPLANE, R.drawable.wifi_on_state),
-                        QuickSettingModel.TilesModel(WIFI, R.drawable.wifi_on_state),
-                        QuickSettingModel.TilesModel(BLUETOOTH, R.drawable.wifi_on_state),
-                        QuickSettingModel.TilesModel(BLUETOOTH, R.drawable.wifi_on_state),
-                        QuickSettingModel.BrightnessModel,
-                        QuickSettingModel.NotificationModel("Bluetooth", "Switch on Bluetooth", R.drawable.wifi_on_state)
+                        QuickSettingModel.TilesModel(WIFI, R.drawable.ic_wifi),
+                        QuickSettingModel.TilesModel(FLASHLIGHT, R.drawable.ic_flashlight),
+                        QuickSettingModel.TilesModel(AIRPLANE, R.drawable.ic_airplanemode_active),
+                        QuickSettingModel.TilesModel(BLUETOOTH, R.drawable.ic_bluetooth),
+                        QuickSettingModel.TilesModel(ROTATION, R.drawable.ic_screen_rotation),
+//                        QuickSettingModel.BrightnessModel,
+//                        QuickSettingModel.NotificationModel("Bluetooth", "Switch on Bluetooth", R.drawable.wifi_on_state)
                 )
         )
 
         binding?.customQuickSetting?.isVerticalScrollBarEnabled = false
 
-        val itemTouchHelper = ItemTouchHelper(SwipeToDeleteCallback(adapater = tilesAdapter))
+        val itemTouchHelper = ItemTouchHelper(SwipeToDeleteCallback(adapter = tilesAdapter))
         itemTouchHelper.attachToRecyclerView(binding?.customQuickSetting)
     }
 

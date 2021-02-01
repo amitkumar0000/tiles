@@ -10,7 +10,8 @@
         android:id="@+id/top_sheet"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/white"
+        android:layout_margin="@dimen/dimen_2x"
+        android:background="@drawable/rectangle"
         app:behavior_peekHeight="40dp"
         app:layout_behavior="@string/top_sheet_behavior">
 
@@ -18,7 +19,6 @@
             android:id="@+id/custom_quick_setting"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#EEEEEE"
             android:elevation="10dp"
             />
     </FrameLayout>
