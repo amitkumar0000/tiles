@@ -38,10 +38,7 @@ class QuickSettingService : Service() {
     val mDevicePolicyManager: DevicePolicyManager by lazy {  getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager }
     val  mComponentName: ComponentName by lazy { ComponentName(this, DeviceAdminDemo::class.java) }
 
-    private val tilesAdapter by lazy { TilesAdapter() }
-
-    init {
-    }
+    private val tilesAdapter by lazy { TilesAdapter(this) }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
@@ -174,5 +171,10 @@ class QuickSettingService : Service() {
 
         windowManager.addView(binding!!.root, localLayoutParams)
 
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        tilesAdapter.onCleared()
     }
 }

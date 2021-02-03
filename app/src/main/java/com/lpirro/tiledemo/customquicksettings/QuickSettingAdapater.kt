@@ -3,7 +3,6 @@ package com.lpirro.tiledemo.customquicksettings
 import android.content.ContentResolver
 import android.content.Context
 import android.graphics.drawable.Icon
-import android.net.wifi.WifiManager
 import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
@@ -11,6 +10,9 @@ import android.view.ViewGroup
 import android.widget.SeekBar
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.lpirro.tiledemo.R
+import com.lpirro.tiledemo.Utils
+import com.lpirro.tiledemo.customquicksettings.bluetooth.CustomBluetooth
 import com.lpirro.tiledemo.databinding.CustomBrightnessLayoutBinding
 import com.lpirro.tiledemo.databinding.CustomNotificationLayoutBinding
 import com.lpirro.tiledemo.databinding.CustomTilesBinding
@@ -21,9 +23,10 @@ const val TILES = 0
 const val BRIGHTNESS = 1
 const val NOTIFICATIOn = 2
 
-internal class TilesAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+internal class TilesAdapter(val context: Context) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val listTiles = arrayListOf<QuickSettingModel>()
+    private val bluetooth = CustomBluetooth(context)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
@@ -86,20 +89,73 @@ internal class TilesAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         holder.imageView.setImageResource(tileModel.drawable)
         holder.tileText.text = tileModel.name
 
-        holder.tileLayout.setOnClickListener {
-            holder.tileLayout.isEnabled = tileModel.state
-            tileModel.state = !tileModel.state
-        }
+//        when(tileModel.name) {
+//             BLUETOOTH -> {
+//                 configBluetoothTiles(holder, tileModel)
+//             }
+//        }
+        preapareTiles(holder, tileModel)
+    }
 
-        holder.imageView.setOnClickListener {
-//            when(listTiles[position].name) {
-//                WIFI_ON -> {
-            val wifiManager =  holder.imageView.context.getSystemService(Context.WIFI_SERVICE) as? WifiManager
-            wifiManager?.isWifiEnabled = true
-//                }
-//            }
+    fun onCleared() {
+        bluetooth.unregister()
+    }
+
+    private fun preapareTiles(holder: QuickSettingViewHolder, tileModel: QuickSettingModel.TilesModel) {
+        holder.tileLayout.setOnClickListener {
+            when(tileModel.state) {
+                 false -> {
+                     tileModel.state = true
+//                     holder.tileLayout.setBackgroundResource(R.drawable.circle_blue)
+//                     Utils.setTint(holder.imageView, android.R.color.white)
+                 }
+                 true -> {
+                     tileModel.state = false
+//                     holder.tileLayout.setBackgroundResource(R.drawable.circle_gray)
+//                     Utils.setTint(holder.imageView, R.color.tileimagecolor)
+                 }
+            }
+            holder.tileLayout.isClickable = false
+            configure(holder, tileModel)
         }
     }
+
+    private fun prepareTileState(holder: QuickSettingViewHolder, enable: Boolean) {
+        if(enable) {
+            holder.tileLayout.setBackgroundResource(R.drawable.circle_blue)
+            Utils.setTint(holder.imageView, android.R.color.white)
+        }else {
+            holder.tileLayout.setBackgroundResource(R.drawable.circle_gray)
+            Utils.setTint(holder.imageView, R.color.tileimagecolor)
+        }
+        holder.tileLayout.isClickable = true
+
+    }
+
+    private fun configure(holder: QuickSettingViewHolder, tileModel: QuickSettingModel.TilesModel) {
+        when(tileModel.name) {
+            BLUETOOTH -> {
+                bluetooth.configure(tileModel.state) {
+                    enable ->
+                    prepareTileState(holder, enable)
+                }
+            }
+            WIFI -> {
+
+            }
+
+            AIRPLANE -> {
+
+            }
+            FLASHLIGHT -> {
+
+            }
+            ROTATION -> {
+
+            }
+        }
+    }
+
 
     private fun bindNotificationModel(holder: NotificationViewHolder, notificationModel: QuickSettingModel.NotificationModel) {
         if(notificationModel.smallIcon == 0) {
@@ -119,7 +175,7 @@ internal class TilesAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         return getViewType(position)
     }
 
-    public fun getViewType(position: Int): Int {
+    fun getViewType(position: Int): Int {
         return when (listTiles[position]) {
             is QuickSettingModel.TilesModel -> TILES
             is QuickSettingModel.NotificationModel -> NOTIFICATIOn

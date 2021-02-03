@@ -37,7 +37,7 @@ class CustomQuikSettingActivity : AppCompatActivity() {
 
     private var binding: ActivityCustomQuikSettingBinding? = null
 
-    private val tilesAdapter by lazy { TilesAdapter() }
+    private val tilesAdapter by lazy { TilesAdapter(this) }
     private val notificationAdapter by lazy { NotificationAdapter() }
 
     val mDevicePolicyManager: DevicePolicyManager by lazy {  getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager }

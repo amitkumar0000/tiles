@@ -15,7 +15,7 @@
         android:layout_height="48dp"
         android:id="@+id/tileLayout"
         app:layout_constraintStart_toStartOf="parent"
-        android:background="@drawable/circle"
+        android:background="@drawable/circle_gray"
         android:clickable="true"
         android:focusable="true"
         app:layout_constraintTop_toTopOf="parent">
@@ -28,7 +28,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:tint="@android:color/white" />
+             />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 

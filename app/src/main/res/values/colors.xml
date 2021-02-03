@@ -25,4 +25,5 @@
     <color name="tilesBackgroundColor">#F3F4F8</color>
     <color name="tileBackgroundColor">#D9DADE</color>
     <color name="tileSelectedBackgroundColor">#04A1FE</color>
+    <color name="tileimagecolor">#58595D</color>
 </resources>
