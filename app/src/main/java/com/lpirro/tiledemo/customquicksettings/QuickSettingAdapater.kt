@@ -3,16 +3,20 @@ package com.lpirro.tiledemo.customquicksettings
 import android.content.ContentResolver
 import android.content.Context
 import android.graphics.drawable.Icon
+import android.os.Build
 import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.SeekBar
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.lpirro.tiledemo.R
 import com.lpirro.tiledemo.Utils
 import com.lpirro.tiledemo.customquicksettings.bluetooth.CustomBluetooth
+import com.lpirro.tiledemo.customquicksettings.flashlight.FlashLightConfig
+import com.lpirro.tiledemo.customquicksettings.wifi.WifiConfig
 import com.lpirro.tiledemo.databinding.CustomBrightnessLayoutBinding
 import com.lpirro.tiledemo.databinding.CustomNotificationLayoutBinding
 import com.lpirro.tiledemo.databinding.CustomTilesBinding
@@ -27,6 +31,9 @@ internal class TilesAdapter(val context: Context) : RecyclerView.Adapter<Recycle
 
     private val listTiles = arrayListOf<QuickSettingModel>()
     private val bluetooth = CustomBluetooth(context)
+    private val wifiConfig = WifiConfig(context)
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+    private val flashLightConfig = FlashLightConfig(context)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
@@ -130,14 +137,22 @@ internal class TilesAdapter(val context: Context) : RecyclerView.Adapter<Recycle
                 }
             }
             WIFI -> {
-
+                wifiConfig.configWifi(tileModel.state)
+                prepareTileState(holder, tileModel.state)
             }
 
             AIRPLANE -> {
 
             }
             FLASHLIGHT -> {
-
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                        flashLightConfig.configFlashLight(tileModel.state) {
+                            enable ->
+                            prepareTileState(holder, enable)
+                        }
+                    }
+                }
             }
             ROTATION -> {
 
