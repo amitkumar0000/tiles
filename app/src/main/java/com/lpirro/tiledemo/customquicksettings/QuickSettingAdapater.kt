@@ -103,18 +103,7 @@ internal class TilesAdapter(val context: Context) : RecyclerView.Adapter<Recycle
 
     private fun preapareTiles(holder: QuickSettingViewHolder, tileModel: QuickSettingModel.TilesModel) {
         holder.tileLayout.setOnClickListener {
-            when(tileModel.state) {
-                 false -> {
-                     tileModel.state = true
-//                     holder.tileLayout.setBackgroundResource(R.drawable.circle_blue)
-//                     Utils.setTint(holder.imageView, android.R.color.white)
-                 }
-                 true -> {
-                     tileModel.state = false
-//                     holder.tileLayout.setBackgroundResource(R.drawable.circle_gray)
-//                     Utils.setTint(holder.imageView, R.color.tileimagecolor)
-                 }
-            }
+            tileModel.state = !tileModel.state
             holder.tileLayout.isClickable = false
             configure(holder, tileModel)
         }
