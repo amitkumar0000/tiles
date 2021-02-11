@@ -188,8 +188,8 @@ class QuickSettingService : Service() {
         localLayoutParams.flags = FLAG_NOT_TOUCH_MODAL  // this is to enable the notification to receive touch events
 
 
-        localLayoutParams.width = WindowManager.LayoutParams.WRAP_CONTENT
-        localLayoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT
+        localLayoutParams.width = WindowManager.LayoutParams.MATCH_PARENT
+        localLayoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT
         localLayoutParams.format = PixelFormat.TRANSPARENT
 
         windowManager.addView(binding!!.root, localLayoutParams)
@@ -206,6 +206,9 @@ class QuickSettingService : Service() {
             windowManager.removeView(binding!!.root)
         }
 
+        binding.parentDialogLayout.setOnClickListener {
+            windowManager.removeView(binding!!.root)
+        }
     }
 
 
