@@ -14,8 +14,10 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.lpirro.tiledemo.R
 import com.lpirro.tiledemo.Utils
+import com.lpirro.tiledemo.customquicksettings.autorotate.AutoRotateConfig
 import com.lpirro.tiledemo.customquicksettings.bluetooth.CustomBluetooth
 import com.lpirro.tiledemo.customquicksettings.flashlight.FlashLightConfig
+import com.lpirro.tiledemo.customquicksettings.mobiledata.MobileDataConfig
 import com.lpirro.tiledemo.customquicksettings.wifi.WifiConfig
 import com.lpirro.tiledemo.databinding.CustomBrightnessLayoutBinding
 import com.lpirro.tiledemo.databinding.CustomNotificationLayoutBinding
@@ -32,6 +34,9 @@ internal class TilesAdapter(val context: Context) : RecyclerView.Adapter<Recycle
     private val listTiles = arrayListOf<QuickSettingModel>()
     private val bluetooth = CustomBluetooth(context)
     private val wifiConfig = WifiConfig(context)
+    private val autoRotateConfig = AutoRotateConfig(context)
+    private val mobileDataConfig = MobileDataConfig(context)
+
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     private val flashLightConfig = FlashLightConfig(context)
 
@@ -41,9 +46,9 @@ internal class TilesAdapter(val context: Context) : RecyclerView.Adapter<Recycle
                 val binding = CustomTilesBinding.inflate(LayoutInflater.from(parent.context), parent, false)
                 return QuickSettingViewHolder(binding)
             }
-            BRIGHTNESS -> {
-                return BrightnessViewHolder(CustomBrightnessLayoutBinding.inflate(LayoutInflater.from(parent.context), parent, false))
-            }
+//            BRIGHTNESS -> {
+//                return BrightnessViewHolder(CustomBrightnessLayoutBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+//            }
             NOTIFICATIOn -> {
                 val binding = CustomNotificationLayoutBinding.inflate(LayoutInflater.from(parent.context), parent, false)
                 return NotificationViewHolder(binding)
@@ -60,9 +65,9 @@ internal class TilesAdapter(val context: Context) : RecyclerView.Adapter<Recycle
             is QuickSettingModel.TilesModel -> {
                 bindTilesModel(holder = holder as QuickSettingViewHolder, listTiles[position] as QuickSettingModel.TilesModel)
             }
-            is QuickSettingModel.NotificationModel -> {
-                bindNotificationModel(holder = holder as NotificationViewHolder, listTiles[position] as QuickSettingModel.NotificationModel)
-            }
+//            is QuickSettingModel.NotificationModel -> {
+//                bindNotificationModel(holder = holder as NotificationViewHolder, listTiles[position] as QuickSettingModel.NotificationModel)
+//            }
             is QuickSettingModel.BrightnessModel -> {
                 bindBrightnessModel(holder as BrightnessViewHolder, position)
             }
@@ -141,8 +146,10 @@ internal class TilesAdapter(val context: Context) : RecyclerView.Adapter<Recycle
                 prepareTileState(holder, tileModel.state)
             }
 
-            AIRPLANE -> {
-
+            MOBILEDATA -> {
+                mobileDataConfig.setMobileDataState(tileModel.state) {
+                    enable -> prepareTileState(holder, enable)
+                }
             }
             FLASHLIGHT -> {
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
@@ -155,23 +162,24 @@ internal class TilesAdapter(val context: Context) : RecyclerView.Adapter<Recycle
                 }
             }
             ROTATION -> {
-
+                autoRotateConfig.config(tileModel.state)
+                prepareTileState(holder, tileModel.state)
             }
         }
     }
 
 
-    private fun bindNotificationModel(holder: NotificationViewHolder, notificationModel: QuickSettingModel.NotificationModel) {
-        if(notificationModel.smallIcon == 0) {
-            notificationModel.icon?.let {
-                holder.smallIcon.setImageIcon(it)
-            }
-        } else {
-            holder.smallIcon.setImageResource(notificationModel.smallIcon)
-        }
-        holder.title.text = notificationModel.title
-        holder.content.text = notificationModel.content
-    }
+//    private fun bindNotificationModel(holder: NotificationViewHolder, notificationModel: QuickSettingModel.NotificationModel) {
+//        if(notificationModel.smallIcon == 0) {
+//            notificationModel.icon?.let {
+//                holder.smallIcon.setImageIcon(it)
+//            }
+//        } else {
+//            holder.smallIcon.setImageResource(notificationModel.smallIcon)
+//        }
+//        holder.title.text = notificationModel.title
+//        holder.content.text = notificationModel.content
+//    }
 
     override fun getItemCount() = listTiles.size
 
@@ -182,7 +190,7 @@ internal class TilesAdapter(val context: Context) : RecyclerView.Adapter<Recycle
     fun getViewType(position: Int): Int {
         return when (listTiles[position]) {
             is QuickSettingModel.TilesModel -> TILES
-            is QuickSettingModel.NotificationModel -> NOTIFICATIOn
+//            is QuickSettingModel.NotificationModel -> NOTIFICATIOn
             QuickSettingModel.BrightnessModel -> BRIGHTNESS
         }
     }
@@ -206,5 +214,5 @@ internal class TilesAdapter(val context: Context) : RecyclerView.Adapter<Recycle
 sealed class QuickSettingModel {
     data class TilesModel(val name: String, val drawable: Int, var state: Boolean = false): QuickSettingModel()
     object BrightnessModel: QuickSettingModel()
-    data class NotificationModel(val title: String, val content: String, val smallIcon: Int = 0, val icon: Icon? = null): QuickSettingModel()
+//    data class NotificationModel(val title: String, val content: String, val smallIcon: Int = 0, val icon: Icon? = null): QuickSettingModel()
 }

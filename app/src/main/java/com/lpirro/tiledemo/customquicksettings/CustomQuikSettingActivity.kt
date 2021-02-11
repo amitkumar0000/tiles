@@ -29,6 +29,9 @@ import com.lpirro.tiledemo.databinding.ActivityCustomQuikSettingBinding
 const val WIFI = "wifi"
 const val BLUETOOTH = "bluetooth"
 const val FLASHLIGHT = "flashlight"
+const val GPS = "gps"
+const val MOBILEDATA = "mobileData"
+const val NFC = "nfc"
 const val AIRPLANE = "airplane"
 const val ROTATION = "ROTATION"
 
@@ -66,11 +69,11 @@ class CustomQuikSettingActivity : AppCompatActivity() {
     }
 
     private fun observeNotification() {
-        RxBus.listen().subscribe({
-            tilesAdapter.setData(listOf(it))
-        }, {
-
-        })
+//        RxBus.listen().subscribe({
+//            tilesAdapter.setData(listOf(it))
+//        }, {
+//
+//        })
     }
 
     private fun initQuickSettingTiles() {
@@ -109,7 +112,7 @@ class CustomQuikSettingActivity : AppCompatActivity() {
                         QuickSettingModel.TilesModel(BLUETOOTH, R.drawable.ic_wifi),
                         QuickSettingModel.TilesModel(BLUETOOTH, R.drawable.ic_wifi),
                         QuickSettingModel.BrightnessModel,
-                        QuickSettingModel.NotificationModel("Bluetooth", "Switch on Bluetooth", R.drawable.ic_wifi)
+//                        QuickSettingModel.NotificationModel("Bluetooth", "Switch on Bluetooth", R.drawable.ic_wifi)
                 )
         )
 

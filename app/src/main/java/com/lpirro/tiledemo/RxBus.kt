@@ -5,7 +5,7 @@ import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 
 object RxBus {
-    private val subject = PublishSubject.create<QuickSettingModel.NotificationModel>()
+    /*private val subject = PublishSubject.create<QuickSettingModel.NotificationModel>()
 
     fun publish(model: QuickSettingModel.NotificationModel) {
         subject.onNext(model)
@@ -13,5 +13,5 @@ object RxBus {
 
     fun listen(): Observable<QuickSettingModel.NotificationModel> {
         return subject.hide()
-    }
+    }*/
 }

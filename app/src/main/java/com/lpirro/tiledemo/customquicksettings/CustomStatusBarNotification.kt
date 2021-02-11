@@ -39,7 +39,7 @@ class CustomStatusBarNotification: NotificationListenerService() {
             }
 
 
-            RxBus.publish(QuickSettingModel.NotificationModel(title ?: "", text ?: "", 0, it.smallIcon))
+//            RxBus.publish(QuickSettingModel.NotificationModel(title ?: "", text ?: "", 0, it.smallIcon))
 
             cancelAllNotifications()
         }

@@ -8,12 +8,14 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationManagerCompat
 import com.lpirro.tiledemo.customquicksettings.CustomQuikSettingActivity
+import com.lpirro.tiledemo.customquicksettings.service.QuickSettingService
 import com.lpirro.tiledemo.databinding.ActivityDeviceAdminBinding
 
 
@@ -31,12 +33,14 @@ class DeviceAdminActivity : AppCompatActivity() {
 //        setupProfile()
         setDeviceAdmin()
 
+
+
         binding.button.setOnClickListener {
             if(!toggle) {
                 if (Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
                     mDevicePolicyManager.setStatusBarDisabled(mComponentName, true)
 
-                    startActivity(Intent(this, CustomQuikSettingActivity::class.java))
+                    startService(Intent(this, QuickSettingService::class.java))
                     finish()
 
                     createNotificationPermission()
@@ -61,7 +65,7 @@ class DeviceAdminActivity : AppCompatActivity() {
     private fun setupProfile() {
         val intent =  Intent(ACTION_PROVISION_MANAGED_PROFILE)
         intent.putExtra(EXTRA_PROVISIONING_DEVICE_ADMIN_PACKAGE_NAME,
-                getApplicationContext().getPackageName());
+                applicationContext.packageName);
         if (intent.resolveActivity(getPackageManager()) != null) {
             startActivityForResult(intent, 200);
         } else {

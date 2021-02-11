@@ -60,7 +60,7 @@ class QuickSettingService : Service() {
 
 
         val notificationIntent = Intent(this, QuickSettingService::class.java)
-        val pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0)
+        val pendingIntent = PendingIntent.getService(this, 0, notificationIntent, 0)
 // 1
         val notification = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
                 .setContentTitle("QuickSetting")
@@ -98,11 +98,11 @@ class QuickSettingService : Service() {
     }
 
     private fun observeNotification() {
-        RxBus.listen().subscribe({
-            tilesAdapter.setData(listOf(it))
-        }, {
-
-        })
+//        RxBus.listen().subscribe({
+//            tilesAdapter.setData(listOf(it))
+//        }, {
+//
+//        })
     }
 
     private fun initQuickSettingTiles() {
@@ -135,10 +135,12 @@ class QuickSettingService : Service() {
         tilesAdapter.setData(
                 listOf(
                         QuickSettingModel.TilesModel(WIFI, R.drawable.ic_wifi),
-                        QuickSettingModel.TilesModel(FLASHLIGHT, R.drawable.ic_flashlight),
-                        QuickSettingModel.TilesModel(AIRPLANE, R.drawable.ic_airplanemode_active),
                         QuickSettingModel.TilesModel(BLUETOOTH, R.drawable.ic_bluetooth),
-                        QuickSettingModel.TilesModel(ROTATION, R.drawable.ic_screen_rotation),
+                        QuickSettingModel.TilesModel(FLASHLIGHT, R.drawable.ic_flashlight),
+
+                        QuickSettingModel.TilesModel(GPS, R.drawable.ic_gps_off),
+                        QuickSettingModel.TilesModel(MOBILEDATA, R.drawable.ic_cell_wifi),
+                        QuickSettingModel.TilesModel(NFC, R.drawable.ic_nfc),
 //                        QuickSettingModel.BrightnessModel,
 //                        QuickSettingModel.NotificationModel("Bluetooth", "Switch on Bluetooth", R.drawable.wifi_on_state)
                 )
