@@ -48,7 +48,6 @@ class DeviceAdminActivity : AppCompatActivity() {
             } else {
                 mDevicePolicyManager.setStatusBarDisabled(mComponentName, false)
             }
-            toggle = !toggle
         }
     }
 

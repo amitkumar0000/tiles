@@ -21,4 +21,7 @@
     <string name="calendar_tile_name">New Calendar</string>
     <string name="device_description">device_description</string>
     <string name="device_admin_label">device_admin_label</string>
+    <string name="btn_back">cancel</string>
+    <string name="dialog_message">Enter password</string>
+    <string name="btn_okay">okay</string>
 </resources>

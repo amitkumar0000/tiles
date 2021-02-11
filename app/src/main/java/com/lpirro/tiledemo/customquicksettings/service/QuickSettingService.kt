@@ -1,35 +1,37 @@
 package com.lpirro.tiledemo.customquicksettings.service
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
-import android.app.Service
+import android.app.*
 import android.app.admin.DevicePolicyManager
 import android.content.ComponentName
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.PixelFormat
 import android.os.Build
 import android.os.IBinder
 import android.util.Log
-import android.view.Gravity
+import android.util.TypedValue
+import android.view.*
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.view.WindowManager
+import android.view.WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.lpirro.tiledemo.DeviceAdminDemo
 import com.lpirro.tiledemo.R
-import com.lpirro.tiledemo.RxBus
 import com.lpirro.tiledemo.customquicksettings.*
 import com.lpirro.tiledemo.databinding.ActivityCustomQuikSettingBinding
+import com.lpirro.tiledemo.databinding.TextInpuPasswordBinding
 
 
 class QuickSettingService : Service() {
 
     private var binding: ActivityCustomQuikSettingBinding? = null
+    private val windowManager by lazy {  getSystemService(WINDOW_SERVICE) as WindowManager }
+
 
     override fun onBind(intent: Intent): IBinder? {
         return null
@@ -44,7 +46,7 @@ class QuickSettingService : Service() {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             attachForegroundNotification()
             init()
-            Log.d("STATUS"," attachForegroundNotification complete received")
+            Log.d("STATUS", " attachForegroundNotification complete received")
 
         }
         return START_STICKY
@@ -157,8 +159,6 @@ class QuickSettingService : Service() {
         if(binding!!.root.isShown)
             return
 
-        val windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
-
         val localLayoutParams = WindowManager.LayoutParams()
 
         localLayoutParams.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
@@ -174,12 +174,45 @@ class QuickSettingService : Service() {
         windowManager.addView(binding!!.root, localLayoutParams)
 
         binding?.quickSettingStatus?.exitImageView?.setOnClickListener {
-           windowManager.removeView(binding!!.root)
-            stopForeground(true)
-            mDevicePolicyManager.setStatusBarDisabled(mComponentName, false)
+            addAlertDialog()
+        }
+    }
+
+    fun  addAlertDialog() {
+        val binding = TextInpuPasswordBinding.inflate(LayoutInflater.from(this))
+
+        val localLayoutParams = WindowManager.LayoutParams()
+
+        localLayoutParams.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+        localLayoutParams.gravity = Gravity.CENTER
+        localLayoutParams.flags = FLAG_NOT_TOUCH_MODAL  // this is to enable the notification to receive touch events
+
+
+        localLayoutParams.width = WindowManager.LayoutParams.WRAP_CONTENT
+        localLayoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT
+        localLayoutParams.format = PixelFormat.TRANSPARENT
+
+        windowManager.addView(binding!!.root, localLayoutParams)
+
+        binding.btnOk.setOnClickListener {
+            val text = binding!!.editTextTextPassword.text.toString()
+            if(text == "ais1997") {
+                windowManager.removeView(binding!!.root)
+                closeQuickSettingMenu()
+            }
         }
 
+        binding.btnCancel.setOnClickListener {
+            windowManager.removeView(binding!!.root)
+        }
 
+    }
+
+
+    fun closeQuickSettingMenu() {
+        windowManager.removeView(binding!!.root)
+        stopForeground(true)
+        mDevicePolicyManager.setStatusBarDisabled(mComponentName, false)
     }
 
     override fun onDestroy() {
