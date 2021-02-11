@@ -173,6 +173,13 @@ class QuickSettingService : Service() {
 
         windowManager.addView(binding!!.root, localLayoutParams)
 
+        binding?.quickSettingStatus?.exitImageView?.setOnClickListener {
+           windowManager.removeView(binding!!.root)
+            stopForeground(true)
+            mDevicePolicyManager.setStatusBarDisabled(mComponentName, false)
+        }
+
+
     }
 
     override fun onDestroy() {

@@ -4,16 +4,21 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/topCoordinator"
     android:layout_width="match_parent"
-    android:layout_height="450dp">
+    android:layout_height="550dp">
 
-    <FrameLayout
+    <LinearLayout
         android:id="@+id/top_sheet"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/dimen_2x"
         android:background="@drawable/rectangle"
         app:behavior_peekHeight="40dp"
+        android:orientation="vertical"
         app:layout_behavior="@string/top_sheet_behavior">
+
+        <include
+            android:id="@+id/quick_setting_status"
+            layout="@layout/custom_quick_setting_status"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/custom_quick_setting"
@@ -21,7 +26,7 @@
             android:layout_height="match_parent"
             android:elevation="10dp"
             />
-    </FrameLayout>
+    </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
