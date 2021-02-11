@@ -14,13 +14,9 @@ class SharingActivity : AppCompatActivity() {
         val rInent = intent
 
         val rPkgName = rInent.getStringExtra("Package_name")
-        val exitQuickSetting = rInent.getBooleanExtra("CLOSE QUICKSETTING", false)
         rPkgName?.let {
             Log.d("STATUS"," Receiving package name: $it")
         }
-
-        if(exitQuickSetting)
-            RxBus.publish(CloseQuickSetting)
 
         val intent = Intent()
 
