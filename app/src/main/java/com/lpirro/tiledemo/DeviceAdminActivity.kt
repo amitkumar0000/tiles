@@ -8,13 +8,11 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationManagerCompat
-import com.lpirro.tiledemo.customquicksettings.CustomQuikSettingActivity
 import com.lpirro.tiledemo.customquicksettings.service.QuickSettingService
 import com.lpirro.tiledemo.databinding.ActivityDeviceAdminBinding
 

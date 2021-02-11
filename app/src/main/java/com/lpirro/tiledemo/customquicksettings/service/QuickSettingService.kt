@@ -4,24 +4,23 @@ import android.app.*
 import android.app.admin.DevicePolicyManager
 import android.content.ComponentName
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.PixelFormat
 import android.os.Build
 import android.os.IBinder
 import android.util.Log
-import android.util.TypedValue
 import android.view.*
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.view.WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
+import com.lpirro.tiledemo.CloseQuickSetting
 import com.lpirro.tiledemo.DeviceAdminDemo
 import com.lpirro.tiledemo.R
+import com.lpirro.tiledemo.RxBus
 import com.lpirro.tiledemo.customquicksettings.*
 import com.lpirro.tiledemo.databinding.ActivityCustomQuikSettingBinding
 import com.lpirro.tiledemo.databinding.TextInpuPasswordBinding
@@ -31,6 +30,9 @@ class QuickSettingService : Service() {
 
     private var binding: ActivityCustomQuikSettingBinding? = null
     private val windowManager by lazy {  getSystemService(WINDOW_SERVICE) as WindowManager }
+
+    val alertbinding by lazy {  TextInpuPasswordBinding.inflate(LayoutInflater.from(this)) }
+
 
 
     override fun onBind(intent: Intent): IBinder? {
@@ -49,7 +51,19 @@ class QuickSettingService : Service() {
             Log.d("STATUS", " attachForegroundNotification complete received")
 
         }
+
+        listenToBus()
         return START_STICKY
+    }
+
+    fun listenToBus() {
+        RxBus.listen().subscribe {
+            when(it) {
+                is CloseQuickSetting -> {
+                    closeQuickSettingMenu()
+                }
+            }
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -179,7 +193,6 @@ class QuickSettingService : Service() {
     }
 
     fun  addAlertDialog() {
-        val binding = TextInpuPasswordBinding.inflate(LayoutInflater.from(this))
 
         val localLayoutParams = WindowManager.LayoutParams()
 
@@ -192,22 +205,22 @@ class QuickSettingService : Service() {
         localLayoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT
         localLayoutParams.format = PixelFormat.TRANSPARENT
 
-        windowManager.addView(binding!!.root, localLayoutParams)
+        windowManager.addView(alertbinding!!.root, localLayoutParams)
 
-        binding.btnOk.setOnClickListener {
-            val text = binding!!.editTextTextPassword.text.toString()
+        alertbinding.btnOk.setOnClickListener {
+            val text = alertbinding!!.editTextTextPassword.text.toString()
             if(text == "ais1997") {
-                windowManager.removeView(binding!!.root)
+                windowManager.removeView(alertbinding!!.root)
                 closeQuickSettingMenu()
             }
         }
 
-        binding.btnCancel.setOnClickListener {
-            windowManager.removeView(binding!!.root)
+        alertbinding.btnCancel.setOnClickListener {
+            windowManager.removeView(alertbinding!!.root)
         }
 
-        binding.parentDialogLayout.setOnClickListener {
-            windowManager.removeView(binding!!.root)
+        alertbinding.parentDialogLayout.setOnClickListener {
+            windowManager.removeView(alertbinding!!.root)
         }
     }
 
