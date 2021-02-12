@@ -5,6 +5,7 @@ import android.app.admin.DevicePolicyManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.graphics.PixelFormat
 import android.os.Build
 import android.os.IBinder
@@ -24,6 +25,8 @@ import com.lpirro.tiledemo.RxBus
 import com.lpirro.tiledemo.customquicksettings.*
 import com.lpirro.tiledemo.databinding.ActivityCustomQuikSettingBinding
 import com.lpirro.tiledemo.databinding.TextInpuPasswordBinding
+import com.lpirro.tiledemo.sharing.ExitQSettingReceiver
+import java.lang.Exception
 
 
 class QuickSettingService : Service() {
@@ -31,8 +34,9 @@ class QuickSettingService : Service() {
     private var binding: ActivityCustomQuikSettingBinding? = null
     private val windowManager by lazy {  getSystemService(WINDOW_SERVICE) as WindowManager }
 
-    val alertbinding by lazy {  TextInpuPasswordBinding.inflate(LayoutInflater.from(this)) }
+    private val alertbinding by lazy {  TextInpuPasswordBinding.inflate(LayoutInflater.from(this)) }
 
+    private val exitReceiver by lazy { ExitQSettingReceiver() }
 
 
     override fun onBind(intent: Intent): IBinder? {
@@ -52,6 +56,9 @@ class QuickSettingService : Service() {
 
         }
 
+        registerReceiver(exitReceiver, IntentFilter().apply {
+            addAction("android.intent.action.exit.qsetting")
+        })
         listenToBus()
         return START_STICKY
     }
@@ -229,6 +236,9 @@ class QuickSettingService : Service() {
         windowManager.removeView(binding!!.root)
         stopForeground(true)
         mDevicePolicyManager.setStatusBarDisabled(mComponentName, false)
+        try {
+            unregisterReceiver(exitReceiver)
+        } catch (e: Exception) {}
     }
 
     override fun onDestroy() {
