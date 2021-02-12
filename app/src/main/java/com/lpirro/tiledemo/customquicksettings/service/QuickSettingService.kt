@@ -9,11 +9,13 @@ import android.content.IntentFilter
 import android.graphics.PixelFormat
 import android.os.Build
 import android.os.IBinder
+import android.provider.Settings
 import android.util.Log
 import android.view.*
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.view.WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+import android.widget.SeekBar
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.recyclerview.widget.GridLayoutManager
@@ -26,7 +28,7 @@ import com.lpirro.tiledemo.customquicksettings.*
 import com.lpirro.tiledemo.databinding.ActivityCustomQuikSettingBinding
 import com.lpirro.tiledemo.databinding.TextInpuPasswordBinding
 import com.lpirro.tiledemo.sharing.ExitQSettingReceiver
-import java.lang.Exception
+import kotlin.math.roundToInt
 
 
 class QuickSettingService : Service() {
@@ -37,7 +39,6 @@ class QuickSettingService : Service() {
     private val alertbinding by lazy {  TextInpuPasswordBinding.inflate(LayoutInflater.from(this)) }
 
     private val exitReceiver by lazy { ExitQSettingReceiver() }
-
 
     override fun onBind(intent: Intent): IBinder? {
         return null
@@ -197,6 +198,30 @@ class QuickSettingService : Service() {
         binding?.quickSettingStatus?.exitImageView?.setOnClickListener {
             addAlertDialog()
         }
+        binding?.brightness?.brightnessSeekBar?.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+
+                Log.d("TAG", " seek Bar value: $progress")
+                Settings.System.putInt(contentResolver,
+                        Settings.System.SCREEN_BRIGHTNESS, progress)
+
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+
+            }
+
+        })
+    }
+
+    private fun normalize(x: Float, inMin: Float, inMax: Float, outMin: Float, outMax: Float): Int {
+        val outRange = outMax - outMin
+        val inRange = inMax - inMin
+        return ((x - inMin) * outRange / inRange + outMin).roundToInt()
     }
 
     fun  addAlertDialog() {

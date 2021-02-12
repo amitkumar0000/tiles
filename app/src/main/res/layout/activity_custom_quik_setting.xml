@@ -26,6 +26,14 @@
             android:layout_height="match_parent"
             android:elevation="10dp"
             />
+        <include
+            android:id="@+id/brightness"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dimen_4x"
+            android:layout_marginBottom="@dimen/dimen_2x"
+            layout="@layout/custom_brightness_layout"
+            />
     </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

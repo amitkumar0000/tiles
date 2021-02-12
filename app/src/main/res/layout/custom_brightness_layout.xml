@@ -4,12 +4,26 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <ImageView
+        android:layout_width="22dp"
+        android:layout_height="22dp"
+        android:layout_marginLeft="@dimen/dimen_2x"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:src="@drawable/ic_brightness"
+        android:id="@+id/bright_imageview"
+        />
+
     <SeekBar
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:id="@+id/brightnessBar"
+        android:id="@+id/brightnessSeekBar"
+        android:layout_marginLeft="30dp"
+        android:thumbTint="@android:color/holo_blue_dark"
+        android:backgroundTint="@color/tilesBackgroundColor"
+        app:layout_constraintStart_toEndOf="@id/bright_imageview"
+        app:layout_constraintTop_toTopOf="@id/bright_imageview"
+        app:layout_constraintBottom_toBottomOf="@id/bright_imageview"
         android:background="@android:color/white"
         />
 
