@@ -28,6 +28,18 @@ import com.lpirro.tiledemo.customquicksettings.*
 import com.lpirro.tiledemo.databinding.ActivityCustomQuikSettingBinding
 import com.lpirro.tiledemo.databinding.TextInpuPasswordBinding
 import com.lpirro.tiledemo.sharing.ExitQSettingReceiver
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
+import java.util.*
+import java.util.concurrent.TimeUnit
 import kotlin.math.roundToInt
 
 
@@ -39,6 +51,8 @@ class QuickSettingService : Service() {
     private val alertbinding by lazy {  TextInpuPasswordBinding.inflate(LayoutInflater.from(this)) }
 
     private val exitReceiver by lazy { ExitQSettingReceiver() }
+
+    private val disposable = CompositeDisposable()
 
     override fun onBind(intent: Intent): IBinder? {
         return null
@@ -207,15 +221,40 @@ class QuickSettingService : Service() {
 
             }
 
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
 
-            }
-
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {
-
-            }
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
 
         })
+
+        updateDateTime()
+    }
+
+    fun updateDateTime() {
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+
+            disposable.add(Observable.interval(1, TimeUnit.MINUTES)
+                    .subscribeOn(Schedulers.io())
+                    .doOnSubscribe {
+                        setDateTime()
+                    }
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe {
+                        setDateTime()
+                    })
+
+        } else {
+            TODO("VERSION.SDK_INT < O")
+        }
+
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun setDateTime() {
+        val date = LocalDateTime.now()
+        binding?.quickSettingStatus?.dateText?.text = "${date.dayOfMonth} ${date.month} ${date.year}"
+        binding?.quickSettingStatus?.timeText?.text = "${date.hour}:${date.minute}"
     }
 
     private fun normalize(x: Float, inMin: Float, inMax: Float, outMin: Float, outMax: Float): Int {
@@ -269,5 +308,6 @@ class QuickSettingService : Service() {
     override fun onDestroy() {
         super.onDestroy()
         tilesAdapter.onCleared()
+        disposable.clear()
     }
 }

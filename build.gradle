@@ -20,6 +20,13 @@ allprojects {
         google()
         jcenter()
         maven { url 'https://jitpack.io' }
+
+        maven { url "http://dl.bintray.com/populov/maven" }
+        maven { url "https://maven.google.com" } // Google's Maven repository - FCM
+        maven {
+            url 'https://dl.bintray.com/azeesoft/maven'
+        }
+        mavenCentral()
     }
 }
 
