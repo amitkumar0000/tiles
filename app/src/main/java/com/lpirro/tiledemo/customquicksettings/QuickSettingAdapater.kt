@@ -168,7 +168,9 @@ internal class TilesAdapter(val context: Context, val windowManager: WindowManag
                 prepareTileState(holder, tileModel.state)
             }
             GPS -> {
-                gpsConfig.configGpsConfig()
+                gpsConfig.changeGpsEnabled(tileModel.state) {
+                    enable -> prepareTileState(holder, enable)
+                }
             }
             NFC -> {
                 nfcConfig.changeNfcEnabled(tileModel.state) {

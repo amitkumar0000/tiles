@@ -5,29 +5,38 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
-import android.content.IntentSender.SendIntentException
 import android.graphics.PixelFormat
 import android.location.LocationManager
-import android.os.Bundle
 import android.provider.Settings
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.view.WindowManager
 import com.google.android.gms.common.api.GoogleApiClient
-import com.google.android.gms.common.api.PendingResult
-import com.google.android.gms.common.api.ResultCallback
-import com.google.android.gms.common.api.Status
-import com.google.android.gms.location.*
 import com.lpirro.tiledemo.databinding.TextInpuPasswordBinding
+import java.io.DataOutputStream
 
 
 class GpsConfig(val context: Context, val windowManager: WindowManager) {
     private val alertbinding by lazy {  TextInpuPasswordBinding.inflate(LayoutInflater.from(context)) }
     private var googleApiClient: GoogleApiClient? = null
     val REQUEST_LOCATION = 199
-    fun configGpsConfig() {
+
+    fun changeGpsEnabled(enableOrDisable: Boolean, statelistener: (Boolean) -> Unit) {
+        val p = Runtime.getRuntime().exec("su")
+        val os = DataOutputStream(p.outputStream)
+        if(enableOrDisable) {
+            os.writeBytes("settings put secure location_providers_allowed +gps" + "\n")
+            statelistener(true)
+        }else {
+            os.writeBytes("settings put secure location_providers_allowed -gps" + "\n")
+            statelistener(false)
+        }
+        os.writeBytes("exit\n")
+        os.flush()
+    }
+
+    fun configGpsConfig(enableOrDisable: Boolean, statelistener: (Boolean) -> Unit) {
         enableLocationSettings()
     }
 
