@@ -99,7 +99,7 @@ class ScreenActivity : AppCompatActivity() {
     }
 
     private fun setKioskPolicies(mDevicePolicyManager: DevicePolicyManager, mAdminComponentName: ComponentName) {
-        mDevicePolicyManager.setStatusBarDisabled(mAdminComponentName, true)
+//        mDevicePolicyManager.setStatusBarDisabled(mAdminComponentName, true)
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {

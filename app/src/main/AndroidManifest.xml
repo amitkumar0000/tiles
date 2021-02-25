@@ -28,6 +28,11 @@
 
     <uses-feature android:name="android.hardware.camera.flash" />
 
+    <!-- change NFC status toggle -->
+    <uses-permission android:name="android.permission.NFC" />
+    <uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS"
+        tools:ignore="ProtectedPermissions" />
+
     <application
         android:name=".QSettingApplication"
         android:allowBackup="true"

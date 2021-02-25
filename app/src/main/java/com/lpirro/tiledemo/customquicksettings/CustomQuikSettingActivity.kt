@@ -1,6 +1,5 @@
 package com.lpirro.tiledemo.customquicksettings
 
-import android.app.Activity
 import android.app.admin.DevicePolicyManager
 import android.content.ComponentName
 import android.content.Context
@@ -21,7 +20,6 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.lpirro.tiledemo.DeviceAdminDemo
 import com.lpirro.tiledemo.R
-import com.lpirro.tiledemo.RxBus
 import com.lpirro.tiledemo.customquicksettings.service.QuickSettingService
 import com.lpirro.tiledemo.databinding.ActivityCustomQuikSettingBinding
 
@@ -40,7 +38,7 @@ class CustomQuikSettingActivity : AppCompatActivity() {
 
     private var binding: ActivityCustomQuikSettingBinding? = null
 
-    private val tilesAdapter by lazy { TilesAdapter(this) }
+    private val tilesAdapter by lazy { TilesAdapter(this, windowManager) }
     private val notificationAdapter by lazy { NotificationAdapter() }
 
     val mDevicePolicyManager: DevicePolicyManager by lazy {  getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager }

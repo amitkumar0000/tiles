@@ -1,6 +1,9 @@
 package com.lpirro.tiledemo.customquicksettings.service
 
-import android.app.*
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.app.Service
 import android.app.admin.DevicePolicyManager
 import android.content.ComponentName
 import android.content.Context
@@ -11,9 +14,10 @@ import android.os.Build
 import android.os.IBinder
 import android.provider.Settings
 import android.util.Log
-import android.view.*
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.view.WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
 import android.widget.SeekBar
 import androidx.annotation.RequiresApi
@@ -32,13 +36,8 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import java.text.SimpleDateFormat
-import java.time.LocalDate
+import java.io.DataOutputStream
 import java.time.LocalDateTime
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
-import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.math.roundToInt
 
@@ -61,7 +60,7 @@ class QuickSettingService : Service() {
     val mDevicePolicyManager: DevicePolicyManager by lazy {  getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager }
     val  mComponentName: ComponentName by lazy { ComponentName(this, DeviceAdminDemo::class.java) }
 
-    private val tilesAdapter by lazy { TilesAdapter(this) }
+    private val tilesAdapter by lazy { TilesAdapter(this, windowManager) }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
@@ -199,11 +198,9 @@ class QuickSettingService : Service() {
 
         localLayoutParams.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
         localLayoutParams.gravity = Gravity.TOP
-        localLayoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or  // this is to enable the notification to receive touch events
-                WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or  // Draws over status bar
-                WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
+        localLayoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
 
-        localLayoutParams.width = WindowManager.LayoutParams.MATCH_PARENT
+        localLayoutParams.width = ViewGroup.LayoutParams.WRAP_CONTENT
         localLayoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT
         localLayoutParams.format = PixelFormat.TRANSPARENT
 
@@ -299,10 +296,30 @@ class QuickSettingService : Service() {
     fun closeQuickSettingMenu() {
         windowManager.removeView(binding!!.root)
         stopForeground(true)
-        mDevicePolicyManager.setStatusBarDisabled(mComponentName, false)
+
+        enableSystemUi()
+
         try {
             unregisterReceiver(exitReceiver)
         } catch (e: Exception) {}
+    }
+
+    private fun enableSystemUi() {
+//        Runtime.getRuntime().exec("su")
+        Log.d("Amit", " Enabling system ui")
+//        Runtime.getRuntime().exec("pm enable com.android.systemui")
+
+        Observable.timer(5 * 1000, TimeUnit.MILLISECONDS)
+                .subscribe({
+                    Log.d("Amit", " Enabling system ui")
+                    val p = Runtime.getRuntime().exec("su")
+                    val os = DataOutputStream(p.outputStream)
+                    os.writeBytes("pm enable com.android.systemui" + "\n")
+//                    os.writeBytes("reboot" + "\n")
+                    os.writeBytes("exit\n")
+                    os.flush()
+
+                }, {})
     }
 
     override fun onDestroy() {

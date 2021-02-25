@@ -28,12 +28,4 @@ class FlashLightConfig(val context: Context) {
             listener(false)
         }
     }
-
-    private fun clearDeviceOwnerShip() {
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-            mDevicePolicyManager.clearDeviceOwnerApp(context.packageName)
-            Log.d("Tag", " device ownership is cleared")
-        }
-
-    }
 }

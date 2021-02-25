@@ -2,12 +2,12 @@ package com.lpirro.tiledemo.customquicksettings
 
 import android.content.ContentResolver
 import android.content.Context
-import android.graphics.drawable.Icon
 import android.os.Build
 import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.SeekBar
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.DiffUtil
@@ -17,9 +17,9 @@ import com.lpirro.tiledemo.Utils
 import com.lpirro.tiledemo.customquicksettings.autorotate.AutoRotateConfig
 import com.lpirro.tiledemo.customquicksettings.bluetooth.CustomBluetooth
 import com.lpirro.tiledemo.customquicksettings.flashlight.FlashLightConfig
+import com.lpirro.tiledemo.customquicksettings.gps.GpsConfig
 import com.lpirro.tiledemo.customquicksettings.mobiledata.MobileDataConfig
 import com.lpirro.tiledemo.customquicksettings.wifi.WifiConfig
-import com.lpirro.tiledemo.databinding.CustomBrightnessLayoutBinding
 import com.lpirro.tiledemo.databinding.CustomNotificationLayoutBinding
 import com.lpirro.tiledemo.databinding.CustomTilesBinding
 
@@ -29,13 +29,15 @@ const val TILES = 0
 const val BRIGHTNESS = 1
 const val NOTIFICATIOn = 2
 
-internal class TilesAdapter(val context: Context) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+internal class TilesAdapter(val context: Context, val windowManager: WindowManager) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val listTiles = arrayListOf<QuickSettingModel>()
     private val bluetooth = CustomBluetooth(context)
     private val wifiConfig = WifiConfig(context)
     private val autoRotateConfig = AutoRotateConfig(context)
     private val mobileDataConfig = MobileDataConfig(context)
+    private val gpsConfig = GpsConfig(context, windowManager)
+    private val nfcConfig = NfcConfig(context)
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     private val flashLightConfig = FlashLightConfig(context)
@@ -164,6 +166,12 @@ internal class TilesAdapter(val context: Context) : RecyclerView.Adapter<Recycle
             ROTATION -> {
                 autoRotateConfig.config(tileModel.state)
                 prepareTileState(holder, tileModel.state)
+            }
+            GPS -> {
+                gpsConfig.configGpsConfig()
+            }
+            NFC -> {
+                nfcConfig.changeNfcEnabled(tileModel.state)
             }
         }
     }

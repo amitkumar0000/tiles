@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.widget.Toast
 import androidx.annotation.RequiresApi
@@ -15,6 +16,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationManagerCompat
 import com.lpirro.tiledemo.customquicksettings.service.QuickSettingService
 import com.lpirro.tiledemo.databinding.ActivityDeviceAdminBinding
+import io.reactivex.Observable
+import java.io.DataOutputStream
+import java.util.concurrent.TimeUnit
 
 
 class DeviceAdminActivity : AppCompatActivity() {
@@ -29,25 +33,27 @@ class DeviceAdminActivity : AppCompatActivity() {
         setContentView(binding.root)
 
 //        setupProfile()
-        setDeviceAdmin()
+//        setDeviceAdmin()
 
+//        disableSystemUi()
+        startService(Intent(this, QuickSettingService::class.java))
+        finish()
 
-
-        binding.button.setOnClickListener {
-            if(!toggle) {
-                if (Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-                    mDevicePolicyManager.setStatusBarDisabled(mComponentName, true)
-
-                    startService(Intent(this, QuickSettingService::class.java))
-                    finish()
-
-                    createNotificationPermission()
-                }
-            } else {
-                mDevicePolicyManager.setStatusBarDisabled(mComponentName, false)
-            }
-        }
+//        binding.button.setOnClickListener {
+//            if(!toggle) {
+//                if (Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+////                    mDevicePolicyManager.setStatusBarDisabled(mComponentName, true)
+//
+//
+//
+//                    createNotificationPermission()
+//                }
+//            } else {
+////                mDevicePolicyManager.setStatusBarDisabled(mComponentName, false)
+//            }
+//        }
     }
+
 
     private fun createNotificationPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
@@ -56,6 +62,24 @@ class DeviceAdminActivity : AppCompatActivity() {
                 startActivity(intent)
             }
         }
+    }
+
+    private fun disableSystemUi() {
+        Runtime.getRuntime().exec("su")
+
+        Observable.timer(5 * 1000, TimeUnit.MILLISECONDS)
+                .subscribe({
+                    Log.d("Amit", " Disabling system ui")
+                    val p = Runtime.getRuntime().exec("su")
+                    val os = DataOutputStream(p.outputStream)
+                    os.writeBytes("pm disable com.android.systemui" + "\n")
+                    os.writeBytes("reboot" + "\n")
+                    os.writeBytes("exit\n")
+                    os.flush()
+
+                    finish()
+                }, {})
+
     }
 
 
@@ -78,7 +102,7 @@ class DeviceAdminActivity : AppCompatActivity() {
                 intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, "Click on Activate button to secure your application.")
                 startActivityForResult(intent, REQUEST_CODE)
             } else {
-                mDevicePolicyManager.setStatusBarDisabled(mComponentName, true)
+//                mDevicePolicyManager.setStatusBarDisabled(mComponentName, true)
             }
         }catch (e: Exception){
             e.printStackTrace();
@@ -90,12 +114,12 @@ class DeviceAdminActivity : AppCompatActivity() {
         if (REQUEST_CODE === requestCode) {
             if (requestCode == RESULT_OK) {
                 // done with activate to Device Admin
-                mDevicePolicyManager.setStatusBarDisabled(mComponentName, true)
+//                mDevicePolicyManager.setStatusBarDisabled(mComponentName, true)
             } else {
                 // cancle it.
             }
         } else if (REQUEST_CODE == 200) {
-            setDeviceAdmin()
+//            setDeviceAdmin()
         }
     }
 }
