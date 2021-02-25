@@ -3,6 +3,7 @@ package com.lpirro.tiledemo.customquicksettings
 import android.content.Context
 import android.nfc.NfcAdapter
 import android.util.Log
+import com.lpirro.tiledemo.Utils
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
 
@@ -56,5 +57,17 @@ class NfcConfig(val context: Context) {
         }.start()
         return false
     } //end method
+
+    @Throws(java.lang.Exception::class)
+    fun changeNfcEnabled(enableOrDisable: Boolean, statelistener: (Boolean) -> Unit) {
+        Log.d("TileDemo", " new command")
+        var command: String? = null
+        command = if (enableOrDisable) {
+            "svc nfc true"
+        } else {
+            "svc nfc false"
+        }
+        Utils.executeCommandViaSu("-c", command, statelistener, enableOrDisable)
+    }
 
 }

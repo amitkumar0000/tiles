@@ -174,10 +174,10 @@ class QuickSettingService : Service() {
                         QuickSettingModel.TilesModel(WIFI, R.drawable.ic_wifi),
                         QuickSettingModel.TilesModel(BLUETOOTH, R.drawable.ic_bluetooth),
                         QuickSettingModel.TilesModel(FLASHLIGHT, R.drawable.ic_flashlight),
+                        QuickSettingModel.TilesModel(NFC, R.drawable.ic_nfc),
 
                         QuickSettingModel.TilesModel(GPS, R.drawable.ic_gps_off),
                         QuickSettingModel.TilesModel(MOBILEDATA, R.drawable.ic_cell_wifi),
-                        QuickSettingModel.TilesModel(NFC, R.drawable.ic_nfc),
 //                        QuickSettingModel.BrightnessModel,
 //                        QuickSettingModel.NotificationModel("Bluetooth", "Switch on Bluetooth", R.drawable.wifi_on_state)
                 )

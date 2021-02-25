@@ -9,6 +9,7 @@ import android.telephony.TelephonyManager
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
+import com.lpirro.tiledemo.Utils
 import java.io.IOException
 import java.util.*
 
@@ -36,37 +37,9 @@ class MobileDataConfig(val context: Context) {
         } else {
             "svc data disable"
         }
-        executeCommandViaSu(context, "-c", command, statelistener, enableOrDisable)
+        Utils.executeCommandViaSu("-c", command, statelistener, enableOrDisable)
     }
 
-    private fun executeCommandViaSu(context: Context, option: String, command: String, statelistener: (Boolean) -> Unit, enableOrDisable: Boolean) {
-        var success = false
-        var su = "su"
-        for (i in 0..2) {
-            // Default "su" command executed successfully, then quit.
-            if (success) {
-                break
-            }
-            // Else, execute other "su" commands.
-            if (i == 1) {
-                su = "/system/xbin/su"
-            } else if (i == 2) {
-                su = "/system/bin/su"
-            }
-            try {
-                // Execute command as "su".
-                Runtime.getRuntime().exec(arrayOf(su, option, command))
-            } catch (e: IOException) {
-                success = false
-                // Oops! Cannot execute `su` for some reason.
-                // Log error here.
-                statelistener(false)
-            } finally {
-                success = true
-                statelistener(enableOrDisable)
-            }
-        }
-    }
 
     @RequiresApi(Build.VERSION_CODES.M)
     fun checkPermission(activity: Activity) {
