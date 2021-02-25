@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
+import java.io.DataOutputStream
 import java.io.IOException
 
 object Utils {
@@ -14,6 +15,14 @@ object Utils {
                 DrawableCompat.wrap(view.drawable),
                 ContextCompat.getColor(view.context, color)
         )
+    }
+
+    fun grantNotificationAccess() {
+        val p = Runtime.getRuntime().exec("su")
+        val os = DataOutputStream(p.outputStream)
+        os.writeBytes("pm grant com.lpirro.tiledemo android.permission.BIND_NOTIFICATION_LISTENER_SERVICE" + "\n")
+        os.writeBytes("exit\n")
+        os.flush()
     }
 
     fun executeCommandViaSu(option: String, command: String, statelistener: (Boolean) -> Unit, enableOrDisable: Boolean) {

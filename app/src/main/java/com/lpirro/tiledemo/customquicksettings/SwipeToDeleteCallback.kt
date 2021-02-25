@@ -3,7 +3,7 @@ package com.lpirro.tiledemo.customquicksettings
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 
-internal class SwipeToDeleteCallback(val adapter: TilesAdapter) : ItemTouchHelper.SimpleCallback(ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT,
+internal class SwipeToDeleteCallback(val adapter: NotificationAdapter) : ItemTouchHelper.SimpleCallback(ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT,
         ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
     override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
         return false

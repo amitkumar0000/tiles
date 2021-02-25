@@ -1,5 +1,6 @@
 package com.lpirro.tiledemo.customquicksettings
 
+import android.graphics.drawable.Icon
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -15,9 +16,11 @@ class NotificationAdapter: RecyclerView.Adapter<NotificationViewHolder>() {
             NotificationViewHolder(CustomNotificationLayoutBinding.inflate(LayoutInflater.from(parent.context), parent, false))
 
     override fun onBindViewHolder(holder: NotificationViewHolder, position: Int) {
-        holder.smallIcon.setImageResource(notificationList[position].icon)
-        holder.title.text = notificationList[position].title
-        holder.content.text = notificationList[position].content
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            notificationList[position].icon?.let{ holder.smallIcon.setImageIcon(notificationList[position].icon) }
+        }
+        notificationList[position].title?.apply {  holder.title.text = this}
+        notificationList[position].content?.apply {  holder.content.text = this}
     }
 
     override fun getItemCount() = notificationList.size
@@ -30,6 +33,11 @@ class NotificationAdapter: RecyclerView.Adapter<NotificationViewHolder>() {
         diffResult.dispatchUpdatesTo(this)
     }
 
+    fun deleteItem(position: Int) {
+        notificationList.removeAt(position)
+        notifyItemRemoved(position)
+    }
+
 }
 
-data class NotificationModel(val icon: Int = R.drawable.bluetooth, val title: String = "", val content: String = "")
+data class NotificationModel(val icon: Icon?, val title: String?, val content: String?)

@@ -24,10 +24,8 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
-import com.lpirro.tiledemo.CloseQuickSetting
-import com.lpirro.tiledemo.DeviceAdminDemo
-import com.lpirro.tiledemo.R
-import com.lpirro.tiledemo.RxBus
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.lpirro.tiledemo.*
 import com.lpirro.tiledemo.customquicksettings.*
 import com.lpirro.tiledemo.databinding.ActivityCustomQuikSettingBinding
 import com.lpirro.tiledemo.databinding.TextInpuPasswordBinding
@@ -62,6 +60,9 @@ class QuickSettingService : Service() {
 
     private val tilesAdapter by lazy { TilesAdapter(this, windowManager) }
 
+    private val notificationAdapter by lazy { NotificationAdapter() }
+
+
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             attachForegroundNotification()
@@ -74,6 +75,8 @@ class QuickSettingService : Service() {
             addAction("android.intent.action.exit.qsetting")
         })
         listenToBus()
+        observeNotification()
+
         return START_STICKY
     }
 
@@ -114,6 +117,7 @@ class QuickSettingService : Service() {
             binding = ActivityCustomQuikSettingBinding.inflate(LayoutInflater.from(this))
 
             initQuickSettingTiles()
+            initNotification()
             showQuickSettingMenu()
 
             stopQuickSetting()
@@ -135,11 +139,12 @@ class QuickSettingService : Service() {
     }
 
     private fun observeNotification() {
-//        RxBus.listen().subscribe({
-//            tilesAdapter.setData(listOf(it))
-//        }, {
-//
-//        })
+        RxBus.listenNotification().subscribe({
+            Log.d("STATUS ", " Received notification $it")
+            notificationAdapter.setData(listOf(it))
+        }, {
+
+        })
     }
 
     private fun initQuickSettingTiles() {
@@ -186,8 +191,31 @@ class QuickSettingService : Service() {
 
         binding?.customQuickSetting?.isVerticalScrollBarEnabled = false
 
-        val itemTouchHelper = ItemTouchHelper(SwipeToDeleteCallback(adapter = tilesAdapter))
-        itemTouchHelper.attachToRecyclerView(binding?.customQuickSetting)
+
+    }
+
+    private fun initNotification() {
+        binding?.notificationList?.adapter = notificationAdapter
+
+        binding?.notificationList?.layoutManager = LinearLayoutManager(this)
+
+        val itemTouchHelper = ItemTouchHelper(SwipeToDeleteCallback(adapter = notificationAdapter))
+        itemTouchHelper.attachToRecyclerView(binding?.notificationList)
+
+//        if (Settings.Secure.getString(this.contentResolver, "enabled_notification_listeners").contains(applicationContext.getPackageName())) {
+//            //Add the code to launch the NotificationService Listener here.
+//            startService(Intent(this, CustomStatusBarNotification::class.java))
+//        } else {
+//            //Launch notification access in the settings...
+//            applicationContext.startActivity( Intent(
+//                    "android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS").apply {
+//                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+//            });
+//        }
+
+        Utils.grantNotificationAccess()
+
+        observeNotification()
     }
 
     private fun showQuickSettingMenu() {

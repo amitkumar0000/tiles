@@ -2,17 +2,24 @@ package com.lpirro.tiledemo.customquicksettings.gps
 
 import android.R
 import android.app.AlertDialog
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.graphics.PixelFormat
 import android.location.LocationManager
+import android.os.Build
 import android.provider.Settings
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.view.WindowManager
+import androidx.annotation.RequiresApi
+import androidx.core.app.NotificationCompat
 import com.google.android.gms.common.api.GoogleApiClient
+import com.lpirro.tiledemo.customquicksettings.service.QuickSettingService
 import com.lpirro.tiledemo.databinding.TextInpuPasswordBinding
 import java.io.DataOutputStream
 
@@ -34,6 +41,34 @@ class GpsConfig(val context: Context, val windowManager: WindowManager) {
         }
         os.writeBytes("exit\n")
         os.flush()
+
+
+        addNotification()
+    }
+
+    fun addNotification() {
+        val NOTIFICATION_CHANNEL_ID = "NOTIFICATION_CHANNEL_ID"
+        val channelName = "My Background Service test"
+        val chan = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            NotificationChannel(NOTIFICATION_CHANNEL_ID, channelName, NotificationManager.IMPORTANCE_NONE)
+        } else {
+            TODO("VERSION.SDK_INT < O")
+        }
+        val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        manager.createNotificationChannel(chan);
+
+
+        val notificationIntent = Intent(context, QuickSettingService::class.java)
+        val pendingIntent = PendingIntent.getService(context, 0, notificationIntent, 0)
+// 1
+        val notification = NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
+                .setContentTitle("Hello App")
+                .setContentText("My QuickSetting is running")
+                .setSmallIcon(com.lpirro.tiledemo.R.drawable.ic_wifi)
+                .setContentIntent(pendingIntent)
+                .build()
+
+        manager.notify(0, notification)
     }
 
     fun configGpsConfig(enableOrDisable: Boolean, statelistener: (Boolean) -> Unit) {

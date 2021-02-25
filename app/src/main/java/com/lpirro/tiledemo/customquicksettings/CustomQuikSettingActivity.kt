@@ -115,9 +115,6 @@ class CustomQuikSettingActivity : AppCompatActivity() {
         )
 
         binding?.customQuickSetting?.isVerticalScrollBarEnabled = false
-
-        val itemTouchHelper = ItemTouchHelper(SwipeToDeleteCallback(adapter = tilesAdapter))
-        itemTouchHelper.attachToRecyclerView(binding!!.customQuickSetting)
     }
 
     private fun initNotification() {
