@@ -11,7 +11,8 @@ class NotificationDiffUtils(private val newItem: List<NotificationModel>, privat
             newItem.size
 
     override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int) =
-            oldItem[oldItemPosition].title == newItem[newItemPosition].title && oldItem[oldItemPosition].icon == oldItem[oldItemPosition].icon
+                    oldItem[oldItemPosition].title == newItem[newItemPosition].title
+                    && oldItem[oldItemPosition].icon == newItem[newItemPosition].icon
                     && newItem[newItemPosition].content == oldItem[oldItemPosition].content
 
     override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int) =

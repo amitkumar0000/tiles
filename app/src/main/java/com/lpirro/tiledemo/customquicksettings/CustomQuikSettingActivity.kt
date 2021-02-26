@@ -39,7 +39,7 @@ class CustomQuikSettingActivity : AppCompatActivity() {
     private var binding: ActivityCustomQuikSettingBinding? = null
 
     private val tilesAdapter by lazy { TilesAdapter(this, windowManager) }
-    private val notificationAdapter by lazy { NotificationAdapter() }
+    private val notificationAdapter by lazy { NotificationAdapter(){} }
 
     val mDevicePolicyManager: DevicePolicyManager by lazy {  getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager }
     val  mComponentName: ComponentName by lazy { ComponentName(this, DeviceAdminDemo::class.java) }

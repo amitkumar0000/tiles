@@ -5,10 +5,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
 import android.app.admin.DevicePolicyManager
-import android.content.ComponentName
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.content.*
 import android.graphics.PixelFormat
 import android.os.Build
 import android.os.IBinder
@@ -22,6 +19,7 @@ import android.view.WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
 import android.widget.SeekBar
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -59,8 +57,12 @@ class QuickSettingService : Service() {
     val  mComponentName: ComponentName by lazy { ComponentName(this, DeviceAdminDemo::class.java) }
 
     private val tilesAdapter by lazy { TilesAdapter(this, windowManager) }
+    val sharedpreferences by lazy {  getSharedPreferences("MyPREFERENCES", MODE_PRIVATE) }
 
-    private val notificationAdapter by lazy { NotificationAdapter() }
+
+    private val notificationAdapter by lazy { NotificationAdapter{
+        binding?.clearNotText?.isVisible = it
+    } }
 
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -202,6 +204,12 @@ class QuickSettingService : Service() {
         val itemTouchHelper = ItemTouchHelper(SwipeToDeleteCallback(adapter = notificationAdapter))
         itemTouchHelper.attachToRecyclerView(binding?.notificationList)
 
+        binding?.clearNotText?.setOnClickListener {
+            notificationAdapter.deleteAll()
+            RxBus.publish(ClearAllNotification)
+
+        }
+
 //        if (Settings.Secure.getString(this.contentResolver, "enabled_notification_listeners").contains(applicationContext.getPackageName())) {
 //            //Add the code to launch the NotificationService Listener here.
 //            startService(Intent(this, CustomStatusBarNotification::class.java))
@@ -325,8 +333,8 @@ class QuickSettingService : Service() {
     fun closeQuickSettingMenu() {
         windowManager.removeView(binding!!.root)
         stopForeground(true)
-
         enableSystemUi()
+
 
         try {
             unregisterReceiver(exitReceiver)
@@ -338,13 +346,18 @@ class QuickSettingService : Service() {
         Log.d("Amit", " Enabling system ui")
 //        Runtime.getRuntime().exec("pm enable com.android.systemui")
 
+
+        sharedpreferences.edit().apply {
+            putBoolean("DISABLE_STATE", false)
+        }.commit()
+
         Observable.timer(5 * 1000, TimeUnit.MILLISECONDS)
                 .subscribe({
                     Log.d("Amit", " Enabling system ui")
                     val p = Runtime.getRuntime().exec("su")
                     val os = DataOutputStream(p.outputStream)
                     os.writeBytes("pm enable com.android.systemui" + "\n")
-//                    os.writeBytes("reboot" + "\n")
+                    os.writeBytes("reboot" + "\n")
                     os.writeBytes("exit\n")
                     os.flush()
 

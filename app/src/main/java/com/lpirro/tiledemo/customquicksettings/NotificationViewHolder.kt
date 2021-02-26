@@ -9,4 +9,5 @@ class NotificationViewHolder(binding: CustomNotificationLayoutBinding): Recycler
     val smallIcon: ImageView = binding.icon
     val title: TextView = binding.title
     val content: TextView = binding.content
+    val layout = binding.notificationRowLayout
 }

@@ -17,6 +17,8 @@ object Utils {
         )
     }
 
+
+
     fun grantNotificationAccess() {
         val p = Runtime.getRuntime().exec("su")
         val os = DataOutputStream(p.outputStream)

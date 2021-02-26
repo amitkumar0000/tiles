@@ -28,3 +28,4 @@ object RxBus {
 
 sealed class Message
 object CloseQuickSetting: Message()
+object ClearAllNotification: Message()

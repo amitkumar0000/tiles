@@ -27,11 +27,16 @@ class DeviceAdminActivity : AppCompatActivity() {
     val  binding by lazy { ActivityDeviceAdminBinding.inflate(LayoutInflater.from(this)) }
 
     var toggle = false
+    val sharedpreferences by lazy {  getSharedPreferences("MyPREFERENCES", MODE_PRIVATE) }
+
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
+        if(!sharedpreferences.getBoolean("DISABLE_STATE", false)) {
+            disableSystemUi()
+        }
 //        setupProfile()
 //        setDeviceAdmin()
 
@@ -66,6 +71,10 @@ class DeviceAdminActivity : AppCompatActivity() {
 
     private fun disableSystemUi() {
         Runtime.getRuntime().exec("su")
+
+        sharedpreferences.edit().apply {
+            putBoolean("DISABLE_STATE", true)
+        }.commit()
 
         Observable.timer(5 * 1000, TimeUnit.MILLISECONDS)
                 .subscribe({

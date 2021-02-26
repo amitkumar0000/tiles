@@ -1,5 +1,6 @@
 package com.lpirro.tiledemo.customquicksettings
 
+import android.app.Notification
 import android.content.Context
 import android.os.Build
 import android.service.notification.NotificationListenerService
@@ -7,11 +8,27 @@ import android.service.notification.StatusBarNotification
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationManagerCompat
+import com.lpirro.tiledemo.ClearAllNotification
 import com.lpirro.tiledemo.RxBus
 
 
 @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
 class CustomStatusBarNotification: NotificationListenerService() {
+
+    override fun onCreate() {
+        super.onCreate()
+        registerListener()
+    }
+
+    private fun registerListener() {
+        RxBus.listen().subscribe {
+            when(it) {
+                is ClearAllNotification -> {
+                    cancelAllNotifications()
+                }
+            }
+        }
+    }
 
     @RequiresApi(Build.VERSION_CODES.KITKAT)
     override fun onNotificationPosted(sbn: StatusBarNotification?) {
@@ -20,6 +37,7 @@ class CustomStatusBarNotification: NotificationListenerService() {
 
 
         sbn?.notification?.let {
+
             val extra = it.extras
             val title = extra.get("android.title") as String?
             val text = extra.get("android.text") as String?
@@ -38,7 +56,7 @@ class CustomStatusBarNotification: NotificationListenerService() {
                 return
             }
 
-            RxBus.publishNotification(NotificationModel(icon = it.smallIcon, title = title, content = text))
+            RxBus.publishNotification(NotificationModel(icon = it.smallIcon, title = title, content = text, pendingIntent = it.contentIntent))
 
         }
 

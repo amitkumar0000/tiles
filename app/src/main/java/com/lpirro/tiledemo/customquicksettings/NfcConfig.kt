@@ -63,9 +63,9 @@ class NfcConfig(val context: Context) {
         Log.d("TileDemo", " new command")
         var command: String? = null
         command = if (enableOrDisable) {
-            "svc nfc true"
+            "svc nfc enable"
         } else {
-            "svc nfc false"
+            "svc nfc disable"
         }
         Utils.executeCommandViaSu("-c", command, statelistener, enableOrDisable)
     }

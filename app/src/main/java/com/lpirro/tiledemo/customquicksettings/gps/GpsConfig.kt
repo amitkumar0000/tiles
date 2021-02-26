@@ -41,9 +41,6 @@ class GpsConfig(val context: Context, val windowManager: WindowManager) {
         }
         os.writeBytes("exit\n")
         os.flush()
-
-
-        addNotification()
     }
 
     fun addNotification() {

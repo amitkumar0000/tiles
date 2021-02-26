@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/topCoordinator"
     android:layout_width="match_parent"
-    android:layout_height="450dp">
+    android:layout_height="wrap_content">
 
     <LinearLayout
         android:id="@+id/top_sheet"
@@ -35,19 +35,21 @@
             layout="@layout/custom_brightness_layout"
             />
 
-<!--        <include android:id="@+id/notificationList"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginTop="@dimen/dimen_4x"-->
-<!--            android:layout_marginBottom="@dimen/dimen_2x"-->
-<!--            layout="@layout/custom_notification_layout"-->
-<!--            />-->
-
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/notificationList"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:elevation="10dp"
+            />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/clearNotText"
+            android:layout_gravity="center"
+            android:text="clear all notification"
+            android:textSize="24sp"
+            android:visibility="gone"
             />
     </LinearLayout>
 

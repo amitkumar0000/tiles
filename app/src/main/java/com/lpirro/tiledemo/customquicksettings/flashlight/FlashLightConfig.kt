@@ -23,7 +23,7 @@ class FlashLightConfig(val context: Context) {
     fun configFlashLight(state: Boolean, listener: (Boolean) -> Unit) {
         try {
             mCameraManager.setTorchMode(mCameraId, state)
-            listener(true)
+            listener(state)
         }catch (exception: Exception) {
             listener(false)
         }
