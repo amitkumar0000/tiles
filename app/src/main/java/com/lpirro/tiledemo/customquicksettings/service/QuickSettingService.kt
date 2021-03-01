@@ -11,18 +11,16 @@ import android.os.Build
 import android.os.IBinder
 import android.provider.Settings
 import android.util.Log
-import android.view.Gravity
-import android.view.LayoutInflater
-import android.view.ViewGroup
-import android.view.WindowManager
+import android.view.*
 import android.view.WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
 import android.widget.SeekBar
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.ItemTouchHelper
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.*
+import com.androidbolts.topsheet.TopSheetBehavior
 import com.lpirro.tiledemo.*
 import com.lpirro.tiledemo.customquicksettings.*
 import com.lpirro.tiledemo.databinding.ActivityCustomQuikSettingBinding
@@ -47,6 +45,9 @@ class QuickSettingService : Service() {
 
     private val exitReceiver by lazy { ExitQSettingReceiver() }
 
+    private lateinit var topSheetBehavior: TopSheetBehavior<View>
+
+
     private val disposable = CompositeDisposable()
 
     override fun onBind(intent: Intent): IBinder? {
@@ -66,6 +67,8 @@ class QuickSettingService : Service() {
 
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        listenToBus()
+        observeNotification()
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             attachForegroundNotification()
             init()
@@ -76,14 +79,46 @@ class QuickSettingService : Service() {
         registerReceiver(exitReceiver, IntentFilter().apply {
             addAction("android.intent.action.exit.qsetting")
         })
-        listenToBus()
-        observeNotification()
+
+        startCollapseExpand()
+
 
         return START_STICKY
     }
 
+    private fun startCollapseExpand() {
+        topSheetBehavior = TopSheetBehavior.from(binding!!.topSheet)
+
+        topSheetBehavior.setTopSheetCallback(object : TopSheetBehavior.TopSheetCallback() {
+            override fun onSlide(bottomSheet: View, slideOffset: Float, isOpening: Boolean?) {
+                Log.d("Top Sheet ", "$slideOffset     $isOpening")
+            }
+
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                Log.d("STATUS "," $newState")
+                when(newState) {
+                    4 -> {
+                        binding?.topCoordinator?.alpha = 0.0f
+                    } else -> {
+                     binding?.topCoordinator?.alpha = 1.0f
+                    }
+                }
+            }
+        })
+
+        binding?.topSheet?.setOnDragListener { v, event ->
+            when(event) {
+
+            }
+           true
+        }
+    }
+
     fun listenToBus() {
-        RxBus.listen().subscribe {
+        RxBus.listen()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
             when(it) {
                 is CloseQuickSetting -> {
                     closeQuickSettingMenu()
@@ -141,9 +176,12 @@ class QuickSettingService : Service() {
     }
 
     private fun observeNotification() {
-        RxBus.listenNotification().subscribe({
-            Log.d("STATUS ", " Received notification $it")
-            notificationAdapter.setData(listOf(it))
+        RxBus.listenNotification()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+            Log.d("Amit ", " Received notification $it")
+            notificationAdapter.setData(it)
         }, {
 
         })
@@ -237,8 +275,8 @@ class QuickSettingService : Service() {
         localLayoutParams.gravity = Gravity.TOP
         localLayoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
 
-        localLayoutParams.width = ViewGroup.LayoutParams.WRAP_CONTENT
-        localLayoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT
+        localLayoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT
+        localLayoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT
         localLayoutParams.format = PixelFormat.TRANSPARENT
 
         windowManager.addView(binding!!.root, localLayoutParams)
@@ -262,6 +300,10 @@ class QuickSettingService : Service() {
         })
 
         updateDateTime()
+
+        binding!!.topCoordinator.setOnClickListener {
+            topSheetBehavior.state = TopSheetBehavior.STATE_COLLAPSED
+        }
     }
 
     fun updateDateTime() {
@@ -363,6 +405,7 @@ class QuickSettingService : Service() {
 
                 }, {})
     }
+
 
     override fun onDestroy() {
         super.onDestroy()

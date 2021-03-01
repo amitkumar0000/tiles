@@ -2,6 +2,7 @@ package com.lpirro.tiledemo.customquicksettings
 
 import android.app.PendingIntent
 import android.graphics.drawable.Icon
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -12,6 +13,7 @@ import com.lpirro.tiledemo.databinding.CustomNotificationLayoutBinding
 class NotificationAdapter(val listener: (Boolean)->Unit): RecyclerView.Adapter<NotificationViewHolder>() {
 
     var notificationList = arrayListOf<NotificationModel>()
+    var hashSet = HashSet<String>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
             NotificationViewHolder(CustomNotificationLayoutBinding.inflate(LayoutInflater.from(parent.context), parent, false))
@@ -31,25 +33,36 @@ class NotificationAdapter(val listener: (Boolean)->Unit): RecyclerView.Adapter<N
 
     override fun getItemCount() = notificationList.size
 
-    fun setData(newList: List<NotificationModel>) {
-        val diffUtils = NotificationDiffUtils(newList, notificationList)
-        val diffResult = DiffUtil.calculateDiff(diffUtils)
-        notificationList.addAll(newList)
-        if(notificationList.size > 3) {
-            listener(true)
-        } else {
-            listener(false)
+    fun setData(newList: NotificationModel) {
+//        val diffUtils = NotificationDiffUtils(newList, notificationList)
+//        val diffResult = DiffUtil.calculateDiff(diffUtils)
+//
+//        notificationList.addAll(newList)
+//        if(notificationList.size > 3) {
+//            listener(true)
+//        } else {
+//            listener(false)
+//        }
+//        diffResult.dispatchUpdatesTo(this)
+        Log.d("Amit", " newList: $newList")
+        if(!hashSet.contains(newList.title)) {
+            notificationList.add(newList)
+            newList.title?.apply { hashSet.add(this) }
+            notifyDataSetChanged()
         }
-        diffResult.dispatchUpdatesTo(this)
+
     }
 
     fun deleteItem(position: Int) {
+        val title = notificationList[position].title
+        hashSet.remove(title)
         notificationList.removeAt(position)
         notifyItemRemoved(position)
     }
 
     fun deleteAll() {
         notificationList.clear()
+        hashSet.clear()
         notifyDataSetChanged()
         listener(false)
     }

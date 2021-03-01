@@ -56,6 +56,7 @@ class CustomStatusBarNotification: NotificationListenerService() {
                 return
             }
 
+            Log.d("Amit", " $title ")
             RxBus.publishNotification(NotificationModel(icon = it.smallIcon, title = title, content = text, pendingIntent = it.contentIntent))
 
         }

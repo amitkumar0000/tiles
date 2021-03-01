@@ -1,5 +1,6 @@
 package com.lpirro.tiledemo
 
+import android.util.Log
 import com.lpirro.tiledemo.customquicksettings.NotificationModel
 import com.lpirro.tiledemo.customquicksettings.QuickSettingModel
 import io.reactivex.Observable
@@ -18,11 +19,12 @@ object RxBus {
     }
 
     fun publishNotification(model: NotificationModel) {
+        Log.d("Amit"," publish $model")
         notificationSubject.onNext(model)
     }
 
-    fun listenNotification(): Observable<NotificationModel> {
-        return notificationSubject.hide()
+    fun listenNotification(): PublishSubject<NotificationModel> {
+        return notificationSubject
     }
 }
 
