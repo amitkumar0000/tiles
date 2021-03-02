@@ -12,6 +12,10 @@ class CustomBluetooth(val context: Context) {
         context.registerReceiver(bluetoothReceiver, IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED))
     }
 
+    fun initConfig(bluetoothState: (Boolean) -> Unit) {
+        bluetoothState(BluetoothAdapter.getDefaultAdapter().isEnabled)
+    }
+
     fun configure( state: Boolean, bluetoothState: (Boolean) -> Unit) {
         setBluetooth(state, bluetoothState)
         bluetoothReceiver.setListener(bluetoothState)

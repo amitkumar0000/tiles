@@ -16,8 +16,13 @@ class FlashLightConfig(val context: Context) {
     private val mCameraManager = context.getSystemService(Context.CAMERA_SERVICE) as CameraManager
     private val mCameraId = mCameraManager.getCameraIdList()[0]
 
-    val mDevicePolicyManager: DevicePolicyManager by lazy {  context.getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager }
-    val  mComponentName: ComponentName by lazy { ComponentName(context, DeviceAdminDemo::class.java) }
+    fun initConfig(listener: (Boolean) -> Unit) {
+        try {
+            
+        }catch (exception: Exception) {
+            listener(false)
+        }
+    }
 
     @RequiresApi(Build.VERSION_CODES.M)
     fun configFlashLight(state: Boolean, listener: (Boolean) -> Unit) {

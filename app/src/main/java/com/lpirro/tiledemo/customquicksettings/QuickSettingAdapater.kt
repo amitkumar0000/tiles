@@ -121,6 +121,7 @@ internal class TilesAdapter(val context: Context, val windowManager: WindowManag
             holder.tileLayout.isClickable = false
             configure(holder, tileModel)
         }
+        initConfig(holder, tileModel)
     }
 
     private fun prepareTileState(holder: QuickSettingViewHolder, enable: Boolean) {
@@ -133,6 +134,37 @@ internal class TilesAdapter(val context: Context, val windowManager: WindowManag
         }
         holder.tileLayout.isClickable = true
 
+    }
+
+    private fun initConfig(holder: QuickSettingViewHolder, tileModel: QuickSettingModel.TilesModel) {
+        when(tileModel.name) {
+            BLUETOOTH -> {
+                bluetooth.initConfig { enable ->
+                    prepareTileState(holder, enable)
+                }
+            }
+            WIFI -> {
+                wifiConfig.initConfig { enable ->
+                    prepareTileState(holder, enable)
+                }
+            }
+            GPS -> {
+                gpsConfig.initConfig { enable ->
+                    prepareTileState(holder, enable)
+                }
+            }
+            NFC -> {
+                nfcConfig.initConfig { enable ->
+                    prepareTileState(holder, enable)
+                }
+            }
+            MOBILEDATA -> {
+                mobileDataConfig.initConfig { enable ->
+                    prepareTileState(holder, enable)
+                }
+            }
+            else -> { }
+        }
     }
 
     private fun configure(holder: QuickSettingViewHolder, tileModel: QuickSettingModel.TilesModel) {

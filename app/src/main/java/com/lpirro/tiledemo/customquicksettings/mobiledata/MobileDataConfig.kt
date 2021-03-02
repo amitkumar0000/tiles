@@ -15,9 +15,11 @@ import java.util.*
 
 
 class MobileDataConfig(val context: Context) {
+    private val telephonyService by lazy {  context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager }
+
     fun setMobileDataState__(enable: Boolean, statelistener: (Boolean) -> Unit) {
         try {
-            val telephonyService = context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager?
+
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
                 telephonyService?.isDataEnabled = enable
                 statelistener(true)
@@ -26,6 +28,12 @@ class MobileDataConfig(val context: Context) {
             Log.e("MainActivity", "Error setting mobile data state", ex)
             statelistener(false)
         }
+    }
+
+    fun initConfig(mobileDataState: (Boolean) -> Unit) {
+//        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+//            mobileDataState(telephonyService.isDataEnabled)
+//        }
     }
 
     @Throws(java.lang.Exception::class)
