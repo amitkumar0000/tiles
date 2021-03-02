@@ -311,7 +311,6 @@ class QuickSettingService : Service() {
                     Settings.System.putInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS_MODE, Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL)
                 }
             }
-
         }
 
         updateDateTime()
@@ -323,6 +322,7 @@ class QuickSettingService : Service() {
         topSheetBehavior.state = TopSheetBehavior.STATE_COLLAPSED
 
         observeBrightness()
+        setBrightnessValue()
 
     }
 
@@ -333,9 +333,7 @@ class QuickSettingService : Service() {
         observer = object : ContentObserver(Handler()) {
             override fun onChange(selfChange: Boolean) {
                 super.onChange(selfChange)
-                val progress = Settings.System.getInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS)
-                Log.d("Tiles", " new brightness value $progress")
-                binding?.brightness?.brightnessSeekBar?.progress = progress
+                setBrightnessValue()
 
             }
 
@@ -345,6 +343,12 @@ class QuickSettingService : Service() {
         }
 
         contentResolver.registerContentObserver(setting, false, observer)
+    }
+
+    private fun setBrightnessValue() {
+        val progress = Settings.System.getInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS)
+        Log.d("Tiles", " new brightness value $progress")
+        binding?.brightness?.brightnessSeekBar?.progress = progress
     }
 
     fun updateDateTime() {
