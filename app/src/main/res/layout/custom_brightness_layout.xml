@@ -20,12 +20,25 @@
         android:layout_height="wrap_content"
         android:id="@+id/brightnessSeekBar"
         android:layout_marginLeft="30dp"
+        android:layout_marginRight="70dp"
         android:thumbTint="@android:color/holo_blue_dark"
         android:backgroundTint="@color/tilesBackgroundColor"
+        app:layout_constraintEnd_toStartOf="@id/brightnessAuto"
         app:layout_constraintStart_toEndOf="@id/bright_imageview"
         app:layout_constraintTop_toTopOf="@id/bright_imageview"
         app:layout_constraintBottom_toBottomOf="@id/bright_imageview"
         android:background="@android:color/white"
+        />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="22dp"
+        android:id="@+id/brightnessAuto"
+        android:text="Auto"
+        app:layout_constraintTop_toTopOf="@id/brightnessSeekBar"
+        app:buttonTint="@color/colorPrimary"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginRight="@dimen/dimen_2x"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

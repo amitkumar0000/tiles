@@ -6,8 +6,11 @@ import android.app.PendingIntent
 import android.app.Service
 import android.app.admin.DevicePolicyManager
 import android.content.*
+import android.database.ContentObserver
 import android.graphics.PixelFormat
+import android.net.Uri
 import android.os.Build
+import android.os.Handler
 import android.os.IBinder
 import android.provider.Settings
 import android.util.Log
@@ -16,8 +19,6 @@ import android.view.WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
 import android.widget.SeekBar
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
-import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.*
 import com.androidbolts.topsheet.TopSheetBehavior
@@ -65,6 +66,8 @@ class QuickSettingService : Service() {
         binding?.clearNotText?.isVisible = it
     } }
 
+    private  lateinit var observer: ContentObserver
+
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         listenToBus()
@@ -87,7 +90,6 @@ class QuickSettingService : Service() {
     }
 
     private fun startCollapseExpand() {
-        topSheetBehavior = TopSheetBehavior.from(binding!!.topSheet)
 
         topSheetBehavior.setTopSheetCallback(object : TopSheetBehavior.TopSheetCallback() {
             override fun onSlide(bottomSheet: View, slideOffset: Float, isOpening: Boolean?) {
@@ -95,12 +97,13 @@ class QuickSettingService : Service() {
             }
 
             override fun onStateChanged(bottomSheet: View, newState: Int) {
-                Log.d("STATUS "," $newState")
-                when(newState) {
+                Log.d("STATUS ", " $newState")
+                when (newState) {
                     4 -> {
                         binding?.topCoordinator?.alpha = 0.0f
-                    } else -> {
-                     binding?.topCoordinator?.alpha = 1.0f
+                    }
+                    else -> {
+                        binding?.topCoordinator?.alpha = 1.0f
                     }
                 }
             }
@@ -152,6 +155,7 @@ class QuickSettingService : Service() {
     private fun init() {
         if(binding == null) {
             binding = ActivityCustomQuikSettingBinding.inflate(LayoutInflater.from(this))
+            topSheetBehavior = TopSheetBehavior.from(binding!!.topSheet)
 
             initQuickSettingTiles()
             initNotification()
@@ -180,11 +184,11 @@ class QuickSettingService : Service() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-            Log.d("Amit ", " Received notification $it")
-            notificationAdapter.setData(it)
-        }, {
+                    Log.d("Amit ", " Received notification $it")
+                    notificationAdapter.setData(it)
+                }, {
 
-        })
+                })
     }
 
     private fun initQuickSettingTiles() {
@@ -290,7 +294,6 @@ class QuickSettingService : Service() {
                 Log.d("TAG", " seek Bar value: $progress")
                 Settings.System.putInt(contentResolver,
                         Settings.System.SCREEN_BRIGHTNESS, progress)
-
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
@@ -299,11 +302,49 @@ class QuickSettingService : Service() {
 
         })
 
+        binding?.brightness?.brightnessAuto?.setOnCheckedChangeListener { buttonView, isChecked ->
+            when(isChecked) {
+                true -> {
+                    Settings.System.putInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS_MODE, Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC)
+                }
+                false -> {
+                    Settings.System.putInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS_MODE, Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL)
+                }
+            }
+
+        }
+
         updateDateTime()
 
         binding!!.topCoordinator.setOnClickListener {
             topSheetBehavior.state = TopSheetBehavior.STATE_COLLAPSED
         }
+
+        topSheetBehavior.state = TopSheetBehavior.STATE_COLLAPSED
+
+        observeBrightness()
+
+    }
+
+    private fun observeBrightness() {
+        val contentResolver = contentResolver
+        val setting: Uri = Settings.System.getUriFor(Settings.System.SCREEN_BRIGHTNESS_MODE)
+
+        observer = object : ContentObserver(Handler()) {
+            override fun onChange(selfChange: Boolean) {
+                super.onChange(selfChange)
+                val progress = Settings.System.getInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS)
+                Log.d("Tiles", " new brightness value $progress")
+                binding?.brightness?.brightnessSeekBar?.progress = progress
+
+            }
+
+            override fun deliverSelfNotifications(): Boolean {
+                return true
+            }
+        }
+
+        contentResolver.registerContentObserver(setting, false, observer)
     }
 
     fun updateDateTime() {
@@ -410,6 +451,7 @@ class QuickSettingService : Service() {
     override fun onDestroy() {
         super.onDestroy()
         tilesAdapter.onCleared()
+        contentResolver.unregisterContentObserver(observer)
         disposable.clear()
     }
 }
