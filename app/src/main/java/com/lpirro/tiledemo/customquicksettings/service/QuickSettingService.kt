@@ -440,7 +440,6 @@ class QuickSettingService : Service() {
 
         Observable.timer(5 * 1000, TimeUnit.MILLISECONDS)
                 .subscribe({
-                    Log.d("Amit", " Enabling system ui")
                     val p = Runtime.getRuntime().exec("su")
                     val os = DataOutputStream(p.outputStream)
                     os.writeBytes("pm enable com.android.systemui" + "\n")

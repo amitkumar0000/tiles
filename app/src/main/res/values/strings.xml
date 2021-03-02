@@ -17,7 +17,7 @@
   -->
 
 <resources>
-    <string name="app_name">TileDemo</string>
+    <string name="app_name">QSettings</string>
     <string name="calendar_tile_name">New Calendar</string>
     <string name="device_description">device_description</string>
     <string name="device_admin_label">device_admin_label</string>

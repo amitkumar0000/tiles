@@ -47,11 +47,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/clearNotText"
-            android:layout_gravity="center"
-            android:text="clear all notification"
-            android:textSize="24sp"
-            android:visibility="gone"
-            />
+            android:text="CLEAR ALL"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:paddingRight="@dimen/dimen_4x"
+            android:paddingBottom="@dimen/dimen_2x"
+
+            android:visibility="visible"
+            android:gravity="end" />
     </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

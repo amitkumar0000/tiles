@@ -51,6 +51,16 @@ class NotificationAdapter(val listener: (Boolean)->Unit): RecyclerView.Adapter<N
             notifyDataSetChanged()
         }
 
+        enableClearAll()
+
+    }
+
+    private fun enableClearAll() {
+        if(notificationList.isNotEmpty()) {
+            listener(true)
+        } else {
+            listener(false)
+        }
     }
 
     fun deleteItem(position: Int) {
@@ -58,13 +68,14 @@ class NotificationAdapter(val listener: (Boolean)->Unit): RecyclerView.Adapter<N
         hashSet.remove(title)
         notificationList.removeAt(position)
         notifyItemRemoved(position)
+        enableClearAll()
     }
 
     fun deleteAll() {
         notificationList.clear()
         hashSet.clear()
         notifyDataSetChanged()
-        listener(false)
+        enableClearAll()
     }
 
 }
