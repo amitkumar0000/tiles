@@ -438,7 +438,7 @@ class QuickSettingService : Service() {
             putBoolean("DISABLE_STATE", false)
         }.commit()
 
-        Observable.timer(5 * 1000, TimeUnit.MILLISECONDS)
+        Observable.timer(2* 1000, TimeUnit.MILLISECONDS)
                 .subscribe({
                     val p = Runtime.getRuntime().exec("su")
                     val os = DataOutputStream(p.outputStream)
