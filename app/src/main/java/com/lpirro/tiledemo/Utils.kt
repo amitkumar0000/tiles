@@ -1,9 +1,7 @@
 package com.lpirro.tiledemo
 
-import android.R
 import android.content.Context
 import android.os.Build
-import android.view.View
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
@@ -19,6 +17,8 @@ import java.util.concurrent.TimeUnit
 object Utils {
 
     val QSETTING_CONFIG = "QSETTING_CONFIG"
+    val NOTIFICATION_PACKAGE_LIST = "NOTIFICATION_PACKAGE_LIST"
+    val listOfallowedNotificationPackage = arrayListOf<String>()
 
     var disableStatusBar = true
         set(value) {

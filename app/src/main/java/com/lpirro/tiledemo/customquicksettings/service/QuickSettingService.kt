@@ -52,6 +52,7 @@ class QuickSettingService : Service() {
 
     private val configReceiver by lazy { QSettingConfigReceiver() }
     private val shareConfigReceiver by lazy { ShareConfigReceiver() }
+    private val notificationConfigReceiver by lazy { NotificationConfigReceiver() }
 
     private lateinit var topSheetBehavior: TopSheetBehavior<View>
 
@@ -98,11 +99,24 @@ class QuickSettingService : Service() {
             addAction("android.intent.action.qsetting.config_request")
         })
 
+        registerReceiver(notificationConfigReceiver, IntentFilter().apply {
+            addAction("android.intent.action.qsetting.notification")
+        })
+
+        getNotificationPackagedList()
 
         startCollapseExpand()
 
         Utils.disableStatusBar(this)
         return START_STICKY
+    }
+
+    private fun getNotificationPackagedList() {
+        val type = object : TypeToken<List<String?>?>() {}.type
+        val json: String? = sharedpreferences.getString(Utils.NOTIFICATION_PACKAGE_LIST, "")
+
+        val notificationList: List<String> = Gson().fromJson(json, type)
+        Utils.listOfallowedNotificationPackage.addAll(notificationList)
     }
 
     private fun closeSystemDialog() {
@@ -509,6 +523,7 @@ class QuickSettingService : Service() {
             unregisterReceiver(exitReceiver)
             unregisterReceiver(configReceiver)
             unregisterReceiver(shareConfigReceiver)
+            unregisterReceiver(notificationConfigReceiver)
         } catch (e: Exception) {}
     }
 

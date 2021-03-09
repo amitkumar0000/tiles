@@ -9,7 +9,9 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationManagerCompat
 import com.lpirro.tiledemo.ClearAllNotification
+import com.lpirro.tiledemo.R
 import com.lpirro.tiledemo.RxBus
+import com.lpirro.tiledemo.Utils
 
 
 @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
@@ -47,20 +49,17 @@ class CustomStatusBarNotification: NotificationListenerService() {
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
                 Log.d("STATUS small icon", ":-  ${it.smallIcon}i")
                 Log.d("STATUS large icon", ":-  ${it.getLargeIcon()}")
-            } else {
-                TODO("VERSION.SDK_INT < M")
             }
 
-            if (sbn?.packageName.equals("com.example.testsample")) {
-                Log.d("STATUS"," Notiification blocked ${sbn?.packageName}")
+            if(!Utils.listOfallowedNotificationPackage.contains(sbn.packageName)) {
+                Log.d("STATUS", "notification is blocked for packageName:- ${sbn.packageName}")
                 return
             }
 
-            Log.d("Amit", " $title ")
-            RxBus.publishNotification(NotificationModel(icon = it.smallIcon, title = title, content = text, pendingIntent = it.contentIntent))
-
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                RxBus.publishNotification(NotificationModel(icon = it.smallIcon, title = title, content = text, pendingIntent = it.contentIntent))
+            }
         }
-
     }
 
     override fun onNotificationRemoved(sbn: StatusBarNotification?) {

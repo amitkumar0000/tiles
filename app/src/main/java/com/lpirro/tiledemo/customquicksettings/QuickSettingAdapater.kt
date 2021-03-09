@@ -198,10 +198,10 @@ internal class TilesAdapter(val context: Context, val windowManager: WindowManag
                     }
                 }
             }
-            ROTATION -> {
-                autoRotateConfig.config(tileModel.state)
-                prepareTileState(holder, tileModel.state)
-            }
+//            ROTATION -> {
+//                autoRotateConfig.config(tileModel.state)
+//                prepareTileState(holder, tileModel.state)
+//            }
             GPS -> {
                 gpsConfig.changeGpsEnabled(tileModel.state) {
                     enable -> prepareTileState(holder, enable)

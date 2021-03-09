@@ -94,10 +94,8 @@ class CustomQuikSettingActivity : AppCompatActivity() {
                 listOf(
                         QuickSettingModel.TilesModel(WIFI, R.drawable.ic_wifi),
                         QuickSettingModel.TilesModel(FLASHLIGHT, R.drawable.ic_flashlight),
-                        QuickSettingModel.TilesModel(AIRPLANE, R.drawable.ic_wifi),
                         QuickSettingModel.TilesModel(WIFI, R.drawable.ic_wifi),
                         QuickSettingModel.TilesModel(BLUETOOTH, R.drawable.ic_wifi),
-                        QuickSettingModel.TilesModel(AIRPLANE, R.drawable.ic_wifi),
                         QuickSettingModel.TilesModel(WIFI, R.drawable.ic_wifi),
                         QuickSettingModel.TilesModel(BLUETOOTH, R.drawable.ic_wifi),
                         QuickSettingModel.TilesModel(BLUETOOTH, R.drawable.ic_wifi),
