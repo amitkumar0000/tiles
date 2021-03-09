@@ -22,16 +22,20 @@ import androidx.core.app.NotificationCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.*
 import com.androidbolts.topsheet.TopSheetBehavior
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.lpirro.tiledemo.*
 import com.lpirro.tiledemo.customquicksettings.*
 import com.lpirro.tiledemo.databinding.ActivityCustomQuikSettingBinding
 import com.lpirro.tiledemo.databinding.TextInpuPasswordBinding
-import com.lpirro.tiledemo.sharing.ExitQSettingReceiver
+import com.lpirro.tiledemo.sharing.*
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import java.io.DataOutputStream
+import java.lang.reflect.InvocationTargetException
+import java.lang.reflect.Method
 import java.time.LocalDateTime
 import java.util.concurrent.TimeUnit
 import kotlin.math.roundToInt
@@ -45,6 +49,9 @@ class QuickSettingService : Service() {
     private val alertbinding by lazy {  TextInpuPasswordBinding.inflate(LayoutInflater.from(this)) }
 
     private val exitReceiver by lazy { ExitQSettingReceiver() }
+
+    private val configReceiver by lazy { QSettingConfigReceiver() }
+    private val shareConfigReceiver by lazy { ShareConfigReceiver() }
 
     private lateinit var topSheetBehavior: TopSheetBehavior<View>
 
@@ -80,13 +87,72 @@ class QuickSettingService : Service() {
         }
 
         registerReceiver(exitReceiver, IntentFilter().apply {
-            addAction("android.intent.action.exit.qsetting")
+            addAction("android.intent.action.qsetting.exit")
         })
+
+        registerReceiver(configReceiver, IntentFilter().apply {
+            addAction("android.intent.action.qsetting.config")
+        })
+
+        registerReceiver(shareConfigReceiver, IntentFilter().apply {
+            addAction("android.intent.action.qsetting.config_request")
+        })
+
 
         startCollapseExpand()
 
-
+        Utils.disableStatusBar(this)
         return START_STICKY
+    }
+
+    private fun closeSystemDialog() {
+        Observable.timer(200, TimeUnit.MILLISECONDS)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    collapse()
+                    closeSystemDialog()
+                }, {})
+    }
+
+    private fun sendBroadCast() {
+        sendBroadcast(Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS))
+    }
+
+    private fun collapse() {
+        // Use reflection to trigger a method from 'StatusBarManager'
+        val statusBarService = getSystemService("statusbar")
+        var statusBarManager: Class<*>? = null
+        try {
+            statusBarManager = Class.forName("android.app.StatusBarManager")
+        } catch (e: ClassNotFoundException) {
+            e.printStackTrace()
+        }
+        var collapseStatusBar: Method? = null
+        try {
+
+            // Prior to API 17, the method to call is 'collapse()'
+            // API 17 onwards, the method to call is `collapsePanels()`
+            collapseStatusBar = if (Build.VERSION.SDK_INT > 16) {
+                statusBarManager!!.getMethod("collapsePanels")
+            } else {
+                statusBarManager!!.getMethod("collapse")
+            }
+        } catch (e: NoSuchMethodException) {
+            e.printStackTrace()
+        }
+        collapseStatusBar?.isAccessible = true
+        try {
+            collapseStatusBar?.invoke(statusBarService)
+        } catch (e: IllegalArgumentException) {
+            e.printStackTrace()
+        } catch (e: IllegalAccessException) {
+            e.printStackTrace()
+        } catch (e: InvocationTargetException) {
+            e.printStackTrace()
+        }
+
+
     }
 
     private fun startCollapseExpand() {
@@ -122,12 +188,15 @@ class QuickSettingService : Service() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
-            when(it) {
-                is CloseQuickSetting -> {
-                    closeQuickSettingMenu()
+                    when (it) {
+                        is CloseQuickSetting -> {
+                            closeQuickSettingMenu()
+                        }
+                        is ConfigSetting -> {
+                            setQSettingData(it.set)
+                        }
+                    }
                 }
-            }
-        }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -217,25 +286,38 @@ class QuickSettingService : Service() {
 
         binding?.customQuickSetting?.layoutManager = layoutManager
 //        binding?.customQuickSetting?.suppressLayout(true)
-
-        tilesAdapter.setData(
-                listOf(
-                        QuickSettingModel.TilesModel(WIFI, R.drawable.ic_wifi),
-                        QuickSettingModel.TilesModel(BLUETOOTH, R.drawable.ic_bluetooth),
-                        QuickSettingModel.TilesModel(GPS, R.drawable.ic_gps_off),
-
-                        QuickSettingModel.TilesModel(FLASHLIGHT, R.drawable.ic_flashlight),
-                        QuickSettingModel.TilesModel(NFC, R.drawable.ic_nfc),
-
-                        QuickSettingModel.TilesModel(MOBILEDATA, R.drawable.ic_cell_wifi),
-//                        QuickSettingModel.BrightnessModel,
-//                        QuickSettingModel.NotificationModel("Bluetooth", "Switch on Bluetooth", R.drawable.wifi_on_state)
-                )
-        )
-
         binding?.customQuickSetting?.isVerticalScrollBarEnabled = false
 
+       setPreOrDefaultConfig()
+    }
 
+    private fun setPreOrDefaultConfig() {
+
+        val type = object : TypeToken<List<QuickSettingModel.TilesModel?>?>() {}.type
+        val json: String? = sharedpreferences.getString(Utils.QSETTING_CONFIG, "")
+
+        val tilesList: List<QuickSettingModel.TilesModel> = Gson().fromJson(json, type)
+
+        val list = if(tilesList != null && tilesList.isNotEmpty())
+            tilesList
+        else
+            listOf(
+                    QuickSettingModel.TilesModel(WIFI, R.drawable.ic_wifi),
+                    QuickSettingModel.TilesModel(BLUETOOTH, R.drawable.ic_bluetooth),
+                    QuickSettingModel.TilesModel(GPS, R.drawable.ic_gps_off),
+
+                    QuickSettingModel.TilesModel(FLASHLIGHT, R.drawable.ic_flashlight),
+                    QuickSettingModel.TilesModel(NFC, R.drawable.ic_nfc),
+
+                    QuickSettingModel.TilesModel(MOBILEDATA, R.drawable.ic_cell_wifi),
+            )
+
+
+        setQSettingData(list)
+    }
+
+    private fun setQSettingData(list: List<QuickSettingModel.TilesModel>) {
+        tilesAdapter.setData(list)
     }
 
     private fun initNotification() {
@@ -316,10 +398,10 @@ class QuickSettingService : Service() {
         updateDateTime()
 
         binding!!.topCoordinator.setOnClickListener {
-            topSheetBehavior.state = TopSheetBehavior.STATE_COLLAPSED
+//            topSheetBehavior.state = TopSheetBehavior.STATE_COLLAPSED
         }
 
-        topSheetBehavior.state = TopSheetBehavior.STATE_COLLAPSED
+//        topSheetBehavior.state = TopSheetBehavior.STATE_COLLAPSED
 
         observeBrightness()
         setBrightnessValue()
@@ -420,11 +502,13 @@ class QuickSettingService : Service() {
     fun closeQuickSettingMenu() {
         windowManager.removeView(binding!!.root)
         stopForeground(true)
-        enableSystemUi()
+//        enableSystemUi()
 
 
         try {
             unregisterReceiver(exitReceiver)
+            unregisterReceiver(configReceiver)
+            unregisterReceiver(shareConfigReceiver)
         } catch (e: Exception) {}
     }
 
@@ -438,7 +522,7 @@ class QuickSettingService : Service() {
             putBoolean("DISABLE_STATE", false)
         }.commit()
 
-        Observable.timer(2* 1000, TimeUnit.MILLISECONDS)
+        Observable.timer(2 * 1000, TimeUnit.MILLISECONDS)
                 .subscribe({
                     val p = Runtime.getRuntime().exec("su")
                     val os = DataOutputStream(p.outputStream)

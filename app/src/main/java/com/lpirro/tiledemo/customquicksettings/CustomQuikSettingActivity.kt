@@ -22,16 +22,8 @@ import com.lpirro.tiledemo.DeviceAdminDemo
 import com.lpirro.tiledemo.R
 import com.lpirro.tiledemo.customquicksettings.service.QuickSettingService
 import com.lpirro.tiledemo.databinding.ActivityCustomQuikSettingBinding
+import com.lpirro.tiledemo.sharing.*
 
-
-const val WIFI = "wifi"
-const val BLUETOOTH = "bluetooth"
-const val FLASHLIGHT = "flashlight"
-const val GPS = "gps"
-const val MOBILEDATA = "mobileData"
-const val NFC = "nfc"
-const val AIRPLANE = "airplane"
-const val ROTATION = "ROTATION"
 
 @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
 class CustomQuikSettingActivity : AppCompatActivity() {

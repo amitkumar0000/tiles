@@ -22,6 +22,7 @@ import com.lpirro.tiledemo.customquicksettings.mobiledata.MobileDataConfig
 import com.lpirro.tiledemo.customquicksettings.wifi.WifiConfig
 import com.lpirro.tiledemo.databinding.CustomNotificationLayoutBinding
 import com.lpirro.tiledemo.databinding.CustomTilesBinding
+import com.lpirro.tiledemo.sharing.*
 
 
 const val WIFI_ON = "wifi"
@@ -117,6 +118,8 @@ internal class TilesAdapter(val context: Context, val windowManager: WindowManag
 
     private fun preapareTiles(holder: QuickSettingViewHolder, tileModel: QuickSettingModel.TilesModel) {
         holder.tileLayout.setOnClickListener {
+            if(tileModel.isReadOnly)
+                return@setOnClickListener
             tileModel.state = !tileModel.state
             holder.tileLayout.isClickable = false
             configure(holder, tileModel)
@@ -234,17 +237,17 @@ internal class TilesAdapter(val context: Context, val windowManager: WindowManag
     fun getViewType(position: Int): Int {
         return when (listTiles[position]) {
             is QuickSettingModel.TilesModel -> TILES
-//            is QuickSettingModel.NotificationModel -> NOTIFICATIOn
             QuickSettingModel.BrightnessModel -> BRIGHTNESS
         }
     }
 
     fun setData(newList: List<QuickSettingModel>) {
-        val diffUtils = QuickSettingDiffUtils(listTiles, newList)
-        val diffResult = DiffUtil.calculateDiff(diffUtils)
-//        listTiles.clear()
+//        val diffUtils = QuickSettingDiffUtils(listTiles, newList)
+//        val diffResult = DiffUtil.calculateDiff(diffUtils)
+        listTiles.clear()
         listTiles.addAll(newList)
-        diffResult.dispatchUpdatesTo(this)
+        notifyDataSetChanged()
+//        diffResult.dispatchUpdatesTo(this)
     }
 
     fun deleteItem(position: Int) {
@@ -256,7 +259,7 @@ internal class TilesAdapter(val context: Context, val windowManager: WindowManag
 }
 
 sealed class QuickSettingModel {
-    data class TilesModel(val name: String, val drawable: Int, var state: Boolean = false): QuickSettingModel()
+    data class TilesModel(val name: String, val drawable: Int, var state: Boolean = false, var isReadOnly: Boolean = false): QuickSettingModel()
     object BrightnessModel: QuickSettingModel()
 //    data class NotificationModel(val title: String, val content: String, val smallIcon: Int = 0, val icon: Icon? = null): QuickSettingModel()
 }

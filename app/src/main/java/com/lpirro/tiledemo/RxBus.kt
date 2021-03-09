@@ -31,3 +31,4 @@ object RxBus {
 sealed class Message
 object CloseQuickSetting: Message()
 object ClearAllNotification: Message()
+data class ConfigSetting(val set: List<QuickSettingModel.TilesModel>): Message()

@@ -35,7 +35,11 @@ class DeviceAdminActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         if(!sharedpreferences.getBoolean("DISABLE_STATE", false)) {
-            disableSystemUi()
+//            disableSystemUi()
+            Utils.disableStatusBar = false
+            sharedpreferences.edit().apply {
+                putBoolean("DISABLE_STATE", false)
+            }.commit()
         }
 //        setupProfile()
 //        setDeviceAdmin()
