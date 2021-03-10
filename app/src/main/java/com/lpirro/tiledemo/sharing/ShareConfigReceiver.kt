@@ -20,7 +20,11 @@ class ShareConfigReceiver: BroadcastReceiver() {
         val listOfConfig: ArrayList<String> = if(tilesList != null && tilesList.isNotEmpty()) {
             val list = arrayListOf<String>()
             tilesList.forEach {
-                list.add(it.name + " read-state " + it.isReadOnly)
+                val readState = if(it.isReadOnly)
+                    "readOnly"
+                else
+                    "readWrite"
+                list.add(it.name + " read-state:- " + readState +  " state(on):- " + it.state)
             }
             list
         }else {
