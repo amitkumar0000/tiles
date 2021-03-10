@@ -4,6 +4,7 @@ plugins {
 }
 apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
 
 android {
     compileSdkVersion 30
@@ -35,6 +36,10 @@ android {
     }
     kotlinOptions {
         jvmTarget = '1.8'
+    }
+
+    androidExtensions {
+        experimental = true
     }
 }
 dependencies {

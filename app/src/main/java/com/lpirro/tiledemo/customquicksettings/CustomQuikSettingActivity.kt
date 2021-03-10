@@ -17,7 +17,6 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.ItemTouchHelper
 import com.lpirro.tiledemo.DeviceAdminDemo
 import com.lpirro.tiledemo.R
 import com.lpirro.tiledemo.customquicksettings.service.QuickSettingService
@@ -92,13 +91,13 @@ class CustomQuikSettingActivity : AppCompatActivity() {
 
         tilesAdapter.setData(
                 listOf(
-                        QuickSettingModel.TilesModel(WIFI, R.drawable.ic_wifi),
-                        QuickSettingModel.TilesModel(FLASHLIGHT, R.drawable.ic_flashlight),
-                        QuickSettingModel.TilesModel(WIFI, R.drawable.ic_wifi),
-                        QuickSettingModel.TilesModel(BLUETOOTH, R.drawable.ic_wifi),
-                        QuickSettingModel.TilesModel(WIFI, R.drawable.ic_wifi),
-                        QuickSettingModel.TilesModel(BLUETOOTH, R.drawable.ic_wifi),
-                        QuickSettingModel.TilesModel(BLUETOOTH, R.drawable.ic_wifi),
+                        QuickSettingModel.TilesModel(WLAN, R.drawable.ic_wifi),
+                        QuickSettingModel.TilesModel(Flashlight, R.drawable.ic_flashlight),
+                        QuickSettingModel.TilesModel(WLAN, R.drawable.ic_wifi),
+                        QuickSettingModel.TilesModel(Bluetooth, R.drawable.ic_wifi),
+                        QuickSettingModel.TilesModel(WLAN, R.drawable.ic_wifi),
+                        QuickSettingModel.TilesModel(Bluetooth, R.drawable.ic_wifi),
+                        QuickSettingModel.TilesModel(Bluetooth, R.drawable.ic_wifi),
                         QuickSettingModel.BrightnessModel,
 //                        QuickSettingModel.NotificationModel("Bluetooth", "Switch on Bluetooth", R.drawable.ic_wifi)
                 )

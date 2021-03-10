@@ -20,11 +20,11 @@ class ShareConfigReceiver: BroadcastReceiver() {
         val listOfConfig: ArrayList<String> = if(tilesList != null && tilesList.isNotEmpty()) {
             val list = arrayListOf<String>()
             tilesList.forEach {
-                list.add(it.name)
+                list.add(it.name + " read-state " + it.isReadOnly)
             }
             list
         }else {
-            arrayListOf(WIFI, BLUETOOTH, GPS, FLASHLIGHT, NFC, MOBILEDATA)
+            arrayListOf(WLAN, Bluetooth, GPS, Flashlight, NFC, MOBILEDATA)
         }
 
         context?.sendBroadcast(Intent().apply {

@@ -10,7 +10,6 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.SeekBar
 import androidx.annotation.RequiresApi
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.lpirro.tiledemo.R
 import com.lpirro.tiledemo.Utils
@@ -141,12 +140,12 @@ internal class TilesAdapter(val context: Context, val windowManager: WindowManag
 
     private fun initConfig(holder: QuickSettingViewHolder, tileModel: QuickSettingModel.TilesModel) {
         when(tileModel.name) {
-            BLUETOOTH -> {
+            Bluetooth -> {
                 bluetooth.initConfig { enable ->
                     prepareTileState(holder, enable)
                 }
             }
-            WIFI -> {
+            WLAN -> {
                 wifiConfig.initConfig { enable ->
                     prepareTileState(holder, enable)
                 }
@@ -172,13 +171,13 @@ internal class TilesAdapter(val context: Context, val windowManager: WindowManag
 
     private fun configure(holder: QuickSettingViewHolder, tileModel: QuickSettingModel.TilesModel) {
         when(tileModel.name) {
-            BLUETOOTH -> {
+            Bluetooth -> {
                 bluetooth.configure(tileModel.state) {
                     enable ->
                     prepareTileState(holder, enable)
                 }
             }
-            WIFI -> {
+            WLAN -> {
                 wifiConfig.configWifi(tileModel.state)
                 prepareTileState(holder, tileModel.state)
             }
@@ -188,7 +187,7 @@ internal class TilesAdapter(val context: Context, val windowManager: WindowManag
                     enable -> prepareTileState(holder, enable)
                 }
             }
-            FLASHLIGHT -> {
+            Flashlight -> {
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
                     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
                         flashLightConfig.configFlashLight(tileModel.state) {

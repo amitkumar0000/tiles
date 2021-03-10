@@ -114,7 +114,8 @@ class QuickSettingService : Service() {
     private fun getNotificationPackagedList() {
         val type = object : TypeToken<List<String?>?>() {}.type
         val json: String? = sharedpreferences.getString(Utils.NOTIFICATION_PACKAGE_LIST, "")
-
+        if(json.isNullOrEmpty() || json.isNullOrEmpty())
+            return
         val notificationList: List<String> = Gson().fromJson(json, type)
         Utils.listOfallowedNotificationPackage.addAll(notificationList)
     }
@@ -310,24 +311,24 @@ class QuickSettingService : Service() {
         val type = object : TypeToken<List<QuickSettingModel.TilesModel?>?>() {}.type
         val json: String? = sharedpreferences.getString(Utils.QSETTING_CONFIG, "")
 
-        val tilesList: List<QuickSettingModel.TilesModel> = Gson().fromJson(json, type)
-
-        val list = if(tilesList != null && tilesList.isNotEmpty())
+        val list = if(json!= null && json.isNotBlank() && json.isNotEmpty()) {
+            val tilesList: List<QuickSettingModel.TilesModel> = Gson().fromJson(json, type)
             tilesList
-        else
-            listOf(
-                    QuickSettingModel.TilesModel(WIFI, R.drawable.ic_wifi),
-                    QuickSettingModel.TilesModel(BLUETOOTH, R.drawable.ic_bluetooth),
+        }
+            else
+                listOf(
+                    QuickSettingModel.TilesModel(WLAN, R.drawable.ic_wifi),
+                    QuickSettingModel.TilesModel(Bluetooth, R.drawable.ic_bluetooth),
                     QuickSettingModel.TilesModel(GPS, R.drawable.ic_gps_off),
 
-                    QuickSettingModel.TilesModel(FLASHLIGHT, R.drawable.ic_flashlight),
+                    QuickSettingModel.TilesModel(Flashlight, R.drawable.ic_flashlight),
                     QuickSettingModel.TilesModel(NFC, R.drawable.ic_nfc),
 
                     QuickSettingModel.TilesModel(MOBILEDATA, R.drawable.ic_cell_wifi),
             )
 
-
         setQSettingData(list)
+
     }
 
     private fun setQSettingData(list: List<QuickSettingModel.TilesModel>) {
