@@ -19,7 +19,6 @@ object RxBus {
     }
 
     fun publishNotification(model: NotificationModel) {
-        Log.d("Amit"," publish $model")
         notificationSubject.onNext(model)
     }
 

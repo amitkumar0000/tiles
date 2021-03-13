@@ -6,10 +6,10 @@ import kotlinx.android.parcel.Parcelize
 @Parcelize
 data class Config(val shownNotifications: ShownNotifications, val shownElements: ShownElements): Parcelable
 @Parcelize
-data class ShownNotifications(val applicationName: ArrayList<ApplicationName>): Parcelable
+data class ShownNotifications(val notification: List<Notification>): Parcelable
 @Parcelize
-data class ApplicationName(val packagename: String): Parcelable
+data class Notification(val applicationName: String, val packageName: String): Parcelable
 @Parcelize
-data class ShownElements(val elements: List<Elements>): Parcelable
+data class ShownElements(var elements: ArrayList<Elements>): Parcelable
 @Parcelize
 data class Elements(val elementName: String, val accessLevel: String): Parcelable

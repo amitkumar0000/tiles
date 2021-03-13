@@ -69,19 +69,19 @@ class QSettingConfigReceiver: BroadcastReceiver() {
                 }
             }
 
-            val listOfNotifications = arrayListOf<String>()
-            shownNotifications.applicationName.forEach {
-                listOfNotifications.add(it.packagename)
+            val listOfNotifications = arrayListOf<Notification>()
+            shownNotifications.notification.forEach {
+                listOfNotifications.add(it)
             }
 
-            Utils.listOfallowedNotificationPackage.addAll(listOfNotifications)
+            Utils.listOfallowedNotificationPackage.addAll(listOfNotifications.map { it.packageName })
             saveToSharedPreference(sharedpreferences, listOfNotifications)
         }
         RxBus.publish(ConfigSetting(list))
         saveIntoSharedPreference(sharedpreferences, list)
     }
 
-    private fun saveToSharedPreference(sharedpreferences: SharedPreferences?, list: ArrayList<String>) {
+    private fun saveToSharedPreference(sharedpreferences: SharedPreferences?, list: ArrayList<Notification>) {
         val json: String = Gson().toJson(list)
         sharedpreferences?.edit()?.apply {
             putString(Utils.NOTIFICATION_PACKAGE_LIST, json)

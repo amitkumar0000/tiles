@@ -14,8 +14,7 @@ class BootReceiver: BroadcastReceiver() {
 
     override fun onReceive(context: Context?, intent: Intent?) {
         Log.d("STATUS"," Boot complete received")
-        val sharedpreferences by lazy {  context?.getSharedPreferences("MyPREFERENCES", Context.MODE_PRIVATE) }
-
+        val sharedpreferences =  context?.getSharedPreferences("MyPREFERENCES", Context.MODE_PRIVATE)
 
         if(sharedpreferences?.getBoolean("DISABLE_STATE", false) == true) {
 

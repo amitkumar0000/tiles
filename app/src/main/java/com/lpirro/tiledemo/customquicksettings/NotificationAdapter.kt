@@ -34,17 +34,6 @@ class NotificationAdapter(val listener: (Boolean)->Unit): RecyclerView.Adapter<N
     override fun getItemCount() = notificationList.size
 
     fun setData(newList: NotificationModel) {
-//        val diffUtils = NotificationDiffUtils(newList, notificationList)
-//        val diffResult = DiffUtil.calculateDiff(diffUtils)
-//
-//        notificationList.addAll(newList)
-//        if(notificationList.size > 3) {
-//            listener(true)
-//        } else {
-//            listener(false)
-//        }
-//        diffResult.dispatchUpdatesTo(this)
-        Log.d("Amit", " newList: $newList")
         if(!hashSet.contains(newList.title)) {
             notificationList.add(newList)
             newList.title?.apply { hashSet.add(this) }

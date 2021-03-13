@@ -1,14 +1,9 @@
 package com.lpirro.tiledemo.customquicksettings.flashlight
 
-import android.app.admin.DevicePolicyManager
-import android.content.ComponentName
 import android.content.Context
 import android.hardware.camera2.CameraManager
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
-import androidx.core.content.ContextCompat.getSystemService
-import com.lpirro.tiledemo.DeviceAdminDemo
 
 
 @RequiresApi(Build.VERSION_CODES.LOLLIPOP)

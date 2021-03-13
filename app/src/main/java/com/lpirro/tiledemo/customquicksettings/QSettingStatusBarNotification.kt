@@ -15,7 +15,7 @@ import com.lpirro.tiledemo.Utils
 
 
 @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
-class CustomStatusBarNotification: NotificationListenerService() {
+class QSettingStatusBarNotification: NotificationListenerService() {
 
     override fun onCreate() {
         super.onCreate()

@@ -45,37 +45,25 @@ class QuickSettingService : Service() {
 
     private var binding: ActivityCustomQuikSettingBinding? = null
     private val windowManager by lazy {  getSystemService(WINDOW_SERVICE) as WindowManager }
-
     private val alertbinding by lazy {  TextInpuPasswordBinding.inflate(LayoutInflater.from(this)) }
-
     private val exitReceiver by lazy { ExitQSettingReceiver() }
-
     private val configReceiver by lazy { QSettingConfigReceiver() }
     private val shareConfigReceiver by lazy { ShareConfigReceiver() }
-    private val notificationConfigReceiver by lazy { NotificationConfigReceiver() }
-
     private lateinit var topSheetBehavior: TopSheetBehavior<View>
-
-
     private val disposable = CompositeDisposable()
 
     override fun onBind(intent: Intent): IBinder? {
         return null
     }
 
-    val mDevicePolicyManager: DevicePolicyManager by lazy {  getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager }
-    val  mComponentName: ComponentName by lazy { ComponentName(this, DeviceAdminDemo::class.java) }
-
     private val tilesAdapter by lazy { TilesAdapter(this, windowManager) }
-    val sharedpreferences by lazy {  getSharedPreferences("MyPREFERENCES", MODE_PRIVATE) }
-
+    private val sharedpreferences by lazy {  getSharedPreferences("MyPREFERENCES", MODE_PRIVATE) }
 
     private val notificationAdapter by lazy { NotificationAdapter{
         binding?.clearNotText?.isVisible = it
     } }
 
     private  lateinit var observer: ContentObserver
-
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         listenToBus()
@@ -84,7 +72,6 @@ class QuickSettingService : Service() {
             attachForegroundNotification()
             init()
             Log.d("STATUS", " attachForegroundNotification complete received")
-
         }
 
         registerReceiver(exitReceiver, IntentFilter().apply {
@@ -97,10 +84,6 @@ class QuickSettingService : Service() {
 
         registerReceiver(shareConfigReceiver, IntentFilter().apply {
             addAction("android.intent.action.qsetting.config_request")
-        })
-
-        registerReceiver(notificationConfigReceiver, IntentFilter().apply {
-            addAction("android.intent.action.qsetting.notification")
         })
 
         getNotificationPackagedList()
@@ -120,62 +103,10 @@ class QuickSettingService : Service() {
         Utils.listOfallowedNotificationPackage.addAll(notificationList)
     }
 
-    private fun closeSystemDialog() {
-        Observable.timer(200, TimeUnit.MILLISECONDS)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    collapse()
-                    closeSystemDialog()
-                }, {})
-    }
-
-    private fun sendBroadCast() {
-        sendBroadcast(Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS))
-    }
-
-    private fun collapse() {
-        // Use reflection to trigger a method from 'StatusBarManager'
-        val statusBarService = getSystemService("statusbar")
-        var statusBarManager: Class<*>? = null
-        try {
-            statusBarManager = Class.forName("android.app.StatusBarManager")
-        } catch (e: ClassNotFoundException) {
-            e.printStackTrace()
-        }
-        var collapseStatusBar: Method? = null
-        try {
-
-            // Prior to API 17, the method to call is 'collapse()'
-            // API 17 onwards, the method to call is `collapsePanels()`
-            collapseStatusBar = if (Build.VERSION.SDK_INT > 16) {
-                statusBarManager!!.getMethod("collapsePanels")
-            } else {
-                statusBarManager!!.getMethod("collapse")
-            }
-        } catch (e: NoSuchMethodException) {
-            e.printStackTrace()
-        }
-        collapseStatusBar?.isAccessible = true
-        try {
-            collapseStatusBar?.invoke(statusBarService)
-        } catch (e: IllegalArgumentException) {
-            e.printStackTrace()
-        } catch (e: IllegalAccessException) {
-            e.printStackTrace()
-        } catch (e: InvocationTargetException) {
-            e.printStackTrace()
-        }
-
-
-    }
-
     private fun startCollapseExpand() {
 
         topSheetBehavior.setTopSheetCallback(object : TopSheetBehavior.TopSheetCallback() {
-            override fun onSlide(bottomSheet: View, slideOffset: Float, isOpening: Boolean?) {
-                Log.d("Top Sheet ", "$slideOffset     $isOpening")
-            }
+            override fun onSlide(bottomSheet: View, slideOffset: Float, isOpening: Boolean?) {}
 
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 Log.d("STATUS ", " $newState")
@@ -225,7 +156,6 @@ class QuickSettingService : Service() {
 
         val notificationIntent = Intent(this, QuickSettingService::class.java)
         val pendingIntent = PendingIntent.getService(this, 0, notificationIntent, 0)
-// 1
         val notification = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
                 .setContentTitle("QuickSetting")
                 .setContentText("QuickSetting is running")
@@ -245,22 +175,8 @@ class QuickSettingService : Service() {
             initNotification()
             showQuickSettingMenu()
 
-            stopQuickSetting()
             observeNotification()
         }
-    }
-
-    private fun stopQuickSetting() {
-//        binding!!.menuOption.setOnClickListener {
-//
-//
-//            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-//                mDevicePolicyManager.setStatusBarDisabled(mComponentName, false)
-//            }
-//            stopForeground(true)
-//            stopSelf()
-//
-//        }
     }
 
     private fun observeNotification() {
@@ -268,7 +184,6 @@ class QuickSettingService : Service() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    Log.d("Amit ", " Received notification $it")
                     notificationAdapter.setData(it)
                 }, {
 
@@ -300,7 +215,6 @@ class QuickSettingService : Service() {
         }
 
         binding?.customQuickSetting?.layoutManager = layoutManager
-//        binding?.customQuickSetting?.suppressLayout(true)
         binding?.customQuickSetting?.isVerticalScrollBarEnabled = false
 
        setPreOrDefaultConfig()
@@ -348,17 +262,6 @@ class QuickSettingService : Service() {
             RxBus.publish(ClearAllNotification)
 
         }
-
-//        if (Settings.Secure.getString(this.contentResolver, "enabled_notification_listeners").contains(applicationContext.getPackageName())) {
-//            //Add the code to launch the NotificationService Listener here.
-//            startService(Intent(this, CustomStatusBarNotification::class.java))
-//        } else {
-//            //Launch notification access in the settings...
-//            applicationContext.startActivity( Intent(
-//                    "android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS").apply {
-//                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-//            });
-//        }
 
         Utils.grantNotificationAccess()
 
@@ -413,10 +316,10 @@ class QuickSettingService : Service() {
         updateDateTime()
 
         binding!!.topCoordinator.setOnClickListener {
-//            topSheetBehavior.state = TopSheetBehavior.STATE_COLLAPSED
+            topSheetBehavior.state = TopSheetBehavior.STATE_COLLAPSED
         }
 
-//        topSheetBehavior.state = TopSheetBehavior.STATE_COLLAPSED
+        topSheetBehavior.state = TopSheetBehavior.STATE_COLLAPSED
 
         observeBrightness()
         setBrightnessValue()
@@ -517,23 +420,17 @@ class QuickSettingService : Service() {
     fun closeQuickSettingMenu() {
         windowManager.removeView(binding!!.root)
         stopForeground(true)
-//        enableSystemUi()
+        enableSystemUi()
 
 
         try {
             unregisterReceiver(exitReceiver)
             unregisterReceiver(configReceiver)
             unregisterReceiver(shareConfigReceiver)
-            unregisterReceiver(notificationConfigReceiver)
         } catch (e: Exception) {}
     }
 
     private fun enableSystemUi() {
-//        Runtime.getRuntime().exec("su")
-        Log.d("Amit", " Enabling system ui")
-//        Runtime.getRuntime().exec("pm enable com.android.systemui")
-
-
         sharedpreferences.edit().apply {
             putBoolean("DISABLE_STATE", false)
         }.commit()
